@@ -1,0 +1,35 @@
+{
+  "modules": {
+    "base": {
+      "topLevelName": "Phoenix",
+
+      "scripts": [
+        {"src": "underscore.js", "bower": "underscore", "global": true}
+      ]
+    },
+
+    "loader": {
+      "topLevelName": "Loader",
+      "mixins": [
+        "lumbar-loader"
+      ],
+      "scripts": [
+        "test/load.js"
+      ]
+    },
+    "test": {
+      "topLevelName": "Test",
+      "mixins": [
+        {"name": "test", "library": "phoenix-build"},
+        "test-runner"
+      ]
+    }
+  },
+
+  "mixins": [
+    "."
+  ],
+  "test": {
+    "auto-include": "test/"
+  }
+}

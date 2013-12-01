@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "0.10"
+
+before_install:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - "phantomjs --version"
+
+before_script:
+  - "./node_modules/.bin/bower install"
+  - "./node_modules/.bin/jake"
+
+script:
+  - "./node_modules/.bin/jake test-runner"

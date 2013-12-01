@@ -1,0 +1,16 @@
+{
+  "name": "error-sites",
+  "version": "0.0.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "/components",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "lumbar-loader": "~1.2.5",
+    "underscore": "~1.5.2"
+  }
+}

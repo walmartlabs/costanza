@@ -1,0 +1,10 @@
+{
+  "name": "error-sites",
+
+  "mixins": {
+  },
+
+  "test": {
+    "auto-include": "test/"
+  }
+}

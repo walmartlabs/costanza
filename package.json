@@ -1,0 +1,13 @@
+{
+  "name": "error-sites",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "bower": "~1.1.2",
+    "phoenix-build": "~2.3",
+    "jake": "*"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/jake test"
+  }
+}

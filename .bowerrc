@@ -1,0 +1,4 @@
+{
+  "directory": "test_components",
+  "shorthand_resolver": "git@github.com:{{shorthand}}.git"
+}
