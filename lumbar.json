@@ -2,6 +2,11 @@
   "name": "error-sites",
 
   "mixins": {
+    "error-sites": {
+      "scripts": [
+        "js/error-sites.js"
+      ]
+    }
   },
 
   "test": {

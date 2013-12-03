@@ -1,0 +1,5 @@
+this.ErrorSites = (function() {
+
+  return {
+  };
+})();

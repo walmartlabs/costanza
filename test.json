@@ -3,6 +3,9 @@
     "base": {
       "topLevelName": "Phoenix",
 
+      "mixins": [
+        "error-sites"
+      ],
       "scripts": [
         {"src": "underscore.js", "bower": "underscore", "global": true}
       ]
