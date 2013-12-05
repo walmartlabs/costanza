@@ -1,5 +1,12 @@
 /*global ErrorSites */
 describe('error-sites', function() {
+  var spy;
+  beforeEach(function() {
+    spy = this.spy();
+
+    ErrorSites.init(spy);
+  });
+
   describe('#onerror', function() {
   });
 
