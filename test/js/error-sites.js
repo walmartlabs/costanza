@@ -1,6 +1,6 @@
+/*global ErrorSites, Event */
 sinon.config.useFakeTimers = undefined;
 
-/*global ErrorSites */
 describe('error-sites', function() {
   var spy;
   beforeEach(function() {
@@ -124,8 +124,54 @@ describe('error-sites', function() {
     });
   });
   describe('addEventListener', function() {
-    it('should catch errors');
-    it('should include current catch tag');
+    it('should execute event listeners', function() {
+      var el = document.createElement('div'),
+          spy = this.spy();
+      el.addEventListener('click', spy);
+
+      var event = new Event('click');
+      el.dispatchEvent(event);
+
+      expect(spy)
+          .to.have.been.calledOnce
+          .to.have.been.calledWith(event);
+    });
+    it('should catch errors', function() {
+      var el = document.createElement('div');
+      el.addEventListener('click', function() { throw new Error('It failed'); });
+
+      var event = new Event('click');
+      el.dispatchEvent(event);
+
+      expect(spy)
+          .to.have.been.calledOnce
+          .to.have.been.calledWith('global', new Error('It failed'));
+    });
+    it('should include current catch tag', function() {
+      var el = document.createElement('div');
+
+      ErrorSites.run('tracked!', function() {
+        el.addEventListener('click', function() { throw new Error('It failed'); });
+      });
+
+      var event = new Event('click');
+      el.dispatchEvent(event);
+
+      expect(spy)
+          .to.have.been.calledOnce
+          .to.have.been.calledWith('tracked!', new Error('It failed'));
+    });
+    it('should remove event listeners', function() {
+      var el = document.createElement('div'),
+          spy = this.spy();
+      el.addEventListener('click', spy);
+      el.removeEventListener('click', spy);
+
+      var event = new Event('click');
+      el.dispatchEvent(event);
+
+      expect(spy).to.not.have.been.called;
+    });
   });
   describe('on attribute handlers', function() {
     it('should catch errors');

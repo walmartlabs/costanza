@@ -1,9 +1,12 @@
+/*global HTMLDocument, Window */
 this.ErrorSites = (function() {
   var reportCallback,
       currentSection,
       _onError,
       _setTimeout,
-      _setInterval;
+      _setInterval,
+      _addEventListener,
+      _removeEventListener;
 
   function init(_reportCallback) {
     reportCallback = _reportCallback;
@@ -23,6 +26,33 @@ this.ErrorSites = (function() {
       };
       setInterval.errorSite = true;
     }
+
+    if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener.errorSite) {
+      _addEventListener = Element.prototype.addEventListener;
+      var addEventListener = function(type, callback, useCapture) {
+        callback._section = callback._section || section(callback);
+        _addEventListener.call(this, type, callback._section, useCapture);
+      };
+      addEventListener.errorSite = true;
+      Element.prototype.addEventListener = addEventListener;
+
+      _removeEventListener = Element.prototype.removeEventListener;
+      var removeEventListener = function(type, callback, useCapture) {
+        _removeEventListener.call(this, type, callback._section || callback, useCapture);
+      };
+      removeEventListener.errorSite = true;
+      Element.prototype.removeEventListener = removeEventListener;
+
+      if (window.HTMLDocument) {
+        HTMLDocument.prototype.addEventListener = addEventListener;
+        HTMLDocument.prototype.removeEventListener = removeEventListener;
+      }
+
+      if (window.Window) {
+        Window.prototype.addEventListener = addEventListener;
+        Window.prototype.removeEventListener = removeEventListener;
+      }
+    }
   }
   function cleanup() {
     reportCallback = undefined;
@@ -31,6 +61,20 @@ this.ErrorSites = (function() {
     }
     if (setInterval.errorSite) {
       window.setInterval = _setInterval;
+    }
+    if (window.Element && Element.prototype.addEventListener && Element.prototype.addEventListener.errorSite) {
+      Element.prototype.addEventListener = _addEventListener;
+      Element.prototype.removeEventListener = _removeEventListener;
+
+      if (window.HTMLDocument) {
+        HTMLDocument.prototype.addEventListener = _addEventListener;
+        HTMLDocument.prototype.removeEventListener = _removeEventListener;
+      }
+
+      if (window.Window) {
+        Window.prototype.addEventListener = _addEventListener;
+        Window.prototype.removeEventListener = _removeEventListener;
+      }
     }
   }
 
