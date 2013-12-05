@@ -62,5 +62,8 @@ this.ErrorSites = (function() {
       return currentSection;
     },
     section: section,
+    run: function(name, callback) {
+      section(name, callback)();
+    },
   };
 })();

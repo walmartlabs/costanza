@@ -14,20 +14,17 @@ describe('error-sites', function() {
 
   describe('#section', function() {
     it('should run callback', function() {
-      var callback = this.spy(),
-          section = ErrorSites.section(callback);
-      section();
+      var callback = this.spy();
+      ErrorSites.run(callback);
       expect(callback).to.have.been.calledOnce;
 
-      section = ErrorSites.section('foo', callback);
-      section();
+      ErrorSites.run('foo', callback);
       expect(callback).to.have.been.calledTwice;
     });
     it('report errors', function() {
-      var section = ErrorSites.section('fail!', function() {
+      ErrorSites.run('fail!', function() {
         throw new Error('Failure is always an option');
       });
-      section();
       expect(spy).to.have.been.calledWith('fail!', new Error('Failure is always an option'));
     });
     it('should restore the site', function() {
@@ -67,7 +64,7 @@ describe('error-sites', function() {
 
       setTimeout(function() {
         throw new Error('It failed');
-      }, 100);
+      }, 10);
     });
     it('should include current catch tag', function(done) {
       ErrorSites.init(function(name, err) {
@@ -76,11 +73,11 @@ describe('error-sites', function() {
         done();
       });
 
-      ErrorSites.section('tracked!', function() {
+      ErrorSites.run('tracked!', function() {
         setTimeout(function() {
           throw new Error('It failed');
-        }, 100);
-      })();
+        }, 10);
+      });
     });
   });
   describe('setInterval', function() {
@@ -92,9 +89,9 @@ describe('error-sites', function() {
     it('should trigger successfully', function(done) {
       var spy = this.spy(function() {
         clearInterval(interval);
-        done()
+        done();
       });
-      interval = setInterval(spy, 100);
+      interval = setInterval(spy, 10);
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
@@ -108,7 +105,7 @@ describe('error-sites', function() {
 
       interval = setInterval(function() {
         throw new Error('It failed');
-      }, 100);
+      }, 10);
     });
     it('should include current catch tag', function(done) {
       ErrorSites.init(function(name, err) {
@@ -119,11 +116,11 @@ describe('error-sites', function() {
         done();
       });
 
-      ErrorSites.section('tracked!', function() {
+      ErrorSites.run('tracked!', function() {
         interval = setInterval(function() {
           throw new Error('It failed');
-        }, 100);
-      })();
+        }, 10);
+      });
     });
   });
   describe('addEventListener', function() {
