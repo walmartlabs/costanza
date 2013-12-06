@@ -93,5 +93,8 @@ Interactive:
     jake watch
     brower http://machine.name:8080/test.html
 
+## Why is this called Costanza?
+
+George Costanza (of Seinfeld fame) was the [master of his domain](http://en.wikipedia.org/wiki/The_Contest) and we want you to be the master of yours.
 
 [node_domains]: http://nodejs.org/api/domain.html
