@@ -65,6 +65,42 @@ Costanza.run('still-yet-another-unique-name', function() {
 });
 ```
 
+## API
+
+### #init(callback)
+
+Initializes the library. In the event of an error `callback(info, rawError)` will be receive:
+
+- `info`: A stringifable object that may contain the following, in addition to custom fields for the case of `emit`.
+  - `type`: The type of error that occurred. For execution errors this will be `javascript`. For errors loading external resources for a particular element this will be tag name of the element that failed to load.
+  - `section`: Current section executing when the failure occured. `global` if there is no current section.
+  - `url`: URL of the error, if available. For element load errors this will be the referenced external object.
+  - `line`: The line number of the error, if available.
+  - `msg`: The error message.
+  - `stack`: The javascript stack trace of the error, if available.
+
+- `rawError`: The raw error object that generated the event, if available. This is not guaranteed to be JSON safe.
+
+### #run(name, callback)
+
+Creates a new named section and executes immediately. This allows for easy creation of new section scopes.
+
+### #bind([name, ] callback)
+
+Creates a section which may be executed at a later time. If `name` is omitted then the section will execute under the current section name. This is useful for providing callbacks to methods that do not use one of the automaticly bound paths.
+
+### #current()
+
+Returns the name of the current section. If none is defined then the return is `global`.
+
+### #emit(info, error)
+
+Emits a custom event to the error handler callback.
+
+### #cleanup()
+
+Removes any overrides that may have been performed. Calling this method is unnecessary under most circumstances.
+
 ## Hall of Shame
 
 The following are exceptions seen in the wild that appear to be thrown by 3rd party extensions or proxy injected code. Don't let friends inject buggy code... or any for that matter.
