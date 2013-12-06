@@ -1,5 +1,5 @@
 /*global HTMLDocument, Window */
-this.ErrorSites = (function() {
+this.Costanza = (function() {
   "use strict";
 
   var reportCallback,

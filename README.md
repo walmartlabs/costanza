@@ -1,6 +1,6 @@
-# error-sites
+# Costanza
 
-Coolest package ever!
+Frontend error tracking toolkit: Own your own domain
 
 ## Usage
 

@@ -1,7 +1,7 @@
-/*global ErrorSites, Event */
+/*global Costanza, Event */
 sinon.config.useFakeTimers = undefined;
 
-describe('error-sites', function() {
+describe('costanza', function() {
   var spy,
       errorSpy,
       _onError = window.onerror;
@@ -12,40 +12,40 @@ describe('error-sites', function() {
     // them
     window.onerror = errorSpy = this.spy();
 
-    ErrorSites.init(spy);
+    Costanza.init(spy);
   });
   afterEach(function() {
-    ErrorSites.cleanup();
+    Costanza.cleanup();
     window.onerror = _onError;
   });
 
   describe('#section', function() {
     it('should run callback', function() {
       var callback = this.spy();
-      ErrorSites.run(callback);
+      Costanza.run(callback);
       expect(callback).to.have.been.calledOnce;
 
-      ErrorSites.run('foo', callback);
+      Costanza.run('foo', callback);
       expect(callback).to.have.been.calledTwice;
     });
     it('report errors', function() {
-      ErrorSites.run('fail!', function() {
+      Costanza.run('fail!', function() {
         throw new Error('Failure is always an option');
       });
       expect(spy).to.have.been.calledWith('fail!', new Error('Failure is always an option'));
     });
     it('should restore the site', function() {
-      var section1 = ErrorSites.section('success', function() {
-        expect(ErrorSites.current()).to.equal('success');
+      var section1 = Costanza.section('success', function() {
+        expect(Costanza.current()).to.equal('success');
         section2();
-        expect(ErrorSites.current()).to.equal('success');
+        expect(Costanza.current()).to.equal('success');
       });
-      var section2 = ErrorSites.section(function() {
-        expect(ErrorSites.current()).to.equal('global');
+      var section2 = Costanza.section(function() {
+        expect(Costanza.current()).to.equal('global');
         section3();
       });
-      var section3 = ErrorSites.section('fail!', function() {
-        expect(ErrorSites.current()).to.equal('fail!');
+      var section3 = Costanza.section('fail!', function() {
+        expect(Costanza.current()).to.equal('fail!');
         throw new Error('Failure is always an option');
       });
       section1();
@@ -55,21 +55,21 @@ describe('error-sites', function() {
 
   describe('#onerror', function() {
     it('should handle error strings', function() {
-      ErrorSites.onError('foo', 'bar', 1);
+      Costanza.onError('foo', 'bar', 1);
       expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'});
     });
     it('should handle error objects', function() {
-      ErrorSites.onError('foo', 'bar', 1, {foo: true});
+      Costanza.onError('foo', 'bar', 1, {foo: true});
       expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'}, {foo: true});
     });
     it('should handle ErrorEvents', function() {
-      ErrorSites.onError({message: 'foo', lineno: 1, filename: 'bar'});
+      Costanza.onError({message: 'foo', lineno: 1, filename: 'bar'});
       expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'});
     });
 
     describe('loading errors', function() {
       it('should handle image load errors', function(done) {
-        ErrorSites.init(function(info, err) {
+        Costanza.init(function(info, err) {
           expect(info.name).to.equal('global');
           expect(info.type).to.equal('img');
           expect(info.url).to.match(/\/not-found.png$/);
@@ -81,7 +81,7 @@ describe('error-sites', function() {
         document.getElementById('qunit-fixture').appendChild(img);
       });
       it('should handle script load errors', function(done) {
-        ErrorSites.init(function(info, err) {
+        Costanza.init(function(info, err) {
           expect(info.name).to.equal('global');
           expect(info.type).to.equal('script');
           expect(info.url).to.match(/\/not-found.js$/);
@@ -93,7 +93,7 @@ describe('error-sites', function() {
         document.getElementById('qunit-fixture').appendChild(script);
       });
       it('should handle script load errors', function(done) {
-        ErrorSites.init(function(info, err) {
+        Costanza.init(function(info, err) {
           expect(info.name).to.equal('global');
           expect(info.type).to.equal('javascript');
           expect(info.url).to.match(/\/invalid.js$/);
@@ -106,7 +106,7 @@ describe('error-sites', function() {
       });
 
       it('should handle link load errors', function(done) {
-        ErrorSites.init(function(info, err) {
+        Costanza.init(function(info, err) {
           expect(info.name).to.equal('global');
           expect(info.type).to.equal('link');
           expect(info.url).to.match(/\/not-found.css$/);
@@ -121,7 +121,7 @@ describe('error-sites', function() {
       });
 
       it('should handle video not found errors', function(done) {
-        ErrorSites.init(function(info, err) {
+        Costanza.init(function(info, err) {
           expect(info.name).to.equal('global');
           expect(info.type).to.equal('video');
           expect(info.url).to.match(/\/not-found.mpg$/);
@@ -134,7 +134,7 @@ describe('error-sites', function() {
       });
 
       it('should handle video load errors', function(done) {
-        ErrorSites.init(function(info, err) {
+        Costanza.init(function(info, err) {
           expect(info.name).to.equal('global');
           expect(info.type).to.equal('video');
           expect(info.url).to.match(/\/invalid.js$/);
@@ -155,7 +155,7 @@ describe('error-sites', function() {
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
-      ErrorSites.init(function(name, err) {
+      Costanza.init(function(name, err) {
         expect(name).to.equal('global');
         expect(err.message).to.equal('It failed');
         done();
@@ -166,13 +166,13 @@ describe('error-sites', function() {
       }, 10);
     });
     it('should include current catch tag', function(done) {
-      ErrorSites.init(function(name, err) {
+      Costanza.init(function(name, err) {
         expect(name).to.equal('tracked!');
         expect(err.message).to.equal('It failed');
         done();
       });
 
-      ErrorSites.run('tracked!', function() {
+      Costanza.run('tracked!', function() {
         setTimeout(function() {
           throw new Error('It failed');
         }, 10);
@@ -194,7 +194,7 @@ describe('error-sites', function() {
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
-      ErrorSites.init(function(name, err) {
+      Costanza.init(function(name, err) {
         clearInterval(interval);
 
         expect(name).to.equal('global');
@@ -207,7 +207,7 @@ describe('error-sites', function() {
       }, 10);
     });
     it('should include current catch tag', function(done) {
-      ErrorSites.init(function(name, err) {
+      Costanza.init(function(name, err) {
         clearInterval(interval);
 
         expect(name).to.equal('tracked!');
@@ -215,7 +215,7 @@ describe('error-sites', function() {
         done();
       });
 
-      ErrorSites.run('tracked!', function() {
+      Costanza.run('tracked!', function() {
         interval = setInterval(function() {
           throw new Error('It failed');
         }, 10);
@@ -249,7 +249,7 @@ describe('error-sites', function() {
     it('should include current catch tag', function() {
       var el = document.createElement('div');
 
-      ErrorSites.run('tracked!', function() {
+      Costanza.run('tracked!', function() {
         el.addEventListener('click', function() { throw new Error('It failed'); });
       });
 

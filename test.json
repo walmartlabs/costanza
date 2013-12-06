@@ -4,7 +4,8 @@
       "topLevelName": "Phoenix",
 
       "mixins": [
-        "error-sites"
+        "costanza",
+        "costanza-zepto"
       ],
       "scripts": [
         {"src": "underscore.js", "bower": "underscore", "global": true}
