@@ -248,21 +248,23 @@ describe('costanza', function() {
           .to.have.been.calledWith(event);
     });
     it('should catch errors', function() {
-      var el = document.createElement('div');
-      el.addEventListener('click', function() { throw new Error('It failed'); });
+      var el = document.createElement('div'),
+          error = new Error('It failed');
+      el.addEventListener('click', function() { throw error; });
 
       var event = new Event('click');
       el.dispatchEvent(event);
 
       expect(spy)
           .to.have.been.calledOnce
-          .to.have.been.calledWith(sinon.match({section: 'global'}), new Error('It failed'));
+          .to.have.been.calledWith(sinon.match({section: 'global'}), error);
     });
     it('should include current catch tag', function() {
-      var el = document.createElement('div');
+      var el = document.createElement('div'),
+          error = new Error('It failed');
 
       Costanza.run('tracked!', function() {
-        el.addEventListener('click', function() { throw new Error('It failed'); });
+        el.addEventListener('click', function() { throw error; });
       });
 
       var event = new Event('click');
@@ -270,7 +272,7 @@ describe('costanza', function() {
 
       expect(spy)
           .to.have.been.calledOnce
-          .to.have.been.calledWith(sinon.match({section: 'tracked!'}), new Error('It failed'));
+          .to.have.been.calledWith(sinon.match({section: 'tracked!'}), error);
     });
     it('should remove event listeners', function() {
       var el = document.createElement('div'),
