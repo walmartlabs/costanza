@@ -7,7 +7,6 @@
         "thorax-dep-zepto",
         "thorax",
         "costanza",
-        "costanza-zepto",
         "costanza-thorax"
       ],
       "scripts": [

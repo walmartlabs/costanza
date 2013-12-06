@@ -7,11 +7,6 @@
         "js/costanza.js"
       ]
     },
-    "costanza-zepto": {
-      "scripts": [
-        "js/costanza-zepto.js"
-      ]
-    },
     "costanza-thorax": {
       "scripts": [
         "js/costanza-thorax.js"
