@@ -25,6 +25,9 @@
       "mixins": [
         {"name": "test", "library": "phoenix-build"},
         "test-runner"
+      ],
+      "static": [
+        {"src": "test/invalid.js", "dest": "invalid.js", "update-externals": true, "root": true}
       ]
     }
   },

@@ -54,6 +54,98 @@ describe('error-sites', function() {
   });
 
   describe('#onerror', function() {
+    it('should handle error strings', function() {
+      ErrorSites.onError('foo', 'bar', 1);
+      expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'});
+    });
+    it('should handle error objects', function() {
+      ErrorSites.onError('foo', 'bar', 1, {foo: true});
+      expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'}, {foo: true});
+    });
+    it('should handle ErrorEvents', function() {
+      ErrorSites.onError({message: 'foo', lineno: 1, filename: 'bar'});
+      expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'});
+    });
+
+    describe('loading errors', function() {
+      it('should handle image load errors', function(done) {
+        ErrorSites.init(function(info, err) {
+          expect(info.name).to.equal('global');
+          expect(info.type).to.equal('img');
+          expect(info.url).to.match(/\/not-found.png$/);
+          done();
+        });
+
+        var img = document.createElement('img');
+        img.src = '/not-found.png';
+        document.getElementById('qunit-fixture').appendChild(img);
+      });
+      it('should handle script load errors', function(done) {
+        ErrorSites.init(function(info, err) {
+          expect(info.name).to.equal('global');
+          expect(info.type).to.equal('script');
+          expect(info.url).to.match(/\/not-found.js$/);
+          done();
+        });
+
+        var script = document.createElement('script');
+        script.src = '/not-found.js';
+        document.getElementById('qunit-fixture').appendChild(script);
+      });
+      it('should handle script load errors', function(done) {
+        ErrorSites.init(function(info, err) {
+          expect(info.name).to.equal('global');
+          expect(info.type).to.equal('javascript');
+          expect(info.url).to.match(/\/invalid.js$/);
+          done();
+        });
+
+        var script = document.createElement('script');
+        script.src = '/invalid.js';
+        document.getElementById('qunit-fixture').appendChild(script);
+      });
+
+      it('should handle link load errors', function(done) {
+        ErrorSites.init(function(info, err) {
+          expect(info.name).to.equal('global');
+          expect(info.type).to.equal('link');
+          expect(info.url).to.match(/\/not-found.css$/);
+          done();
+        });
+
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = '/not-found.css';
+        document.getElementById('qunit-fixture').appendChild(link);
+      });
+
+      it('should handle video not found errors', function(done) {
+        ErrorSites.init(function(info, err) {
+          expect(info.name).to.equal('global');
+          expect(info.type).to.equal('video');
+          expect(info.url).to.match(/\/not-found.mpg$/);
+          done();
+        });
+
+        var video = document.createElement('video');
+        video.src = '/not-found.mpg';
+        document.getElementById('qunit-fixture').appendChild(video);
+      });
+
+      it('should handle video load errors', function(done) {
+        ErrorSites.init(function(info, err) {
+          expect(info.name).to.equal('global');
+          expect(info.type).to.equal('video');
+          expect(info.url).to.match(/\/invalid.js$/);
+          done();
+        });
+
+        var video = document.createElement('video');
+        video.src = '/invalid.js';
+        document.getElementById('qunit-fixture').appendChild(video);
+      });
+    });
   });
 
   describe('setTimeout', function() {

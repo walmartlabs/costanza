@@ -11,6 +11,13 @@ this.ErrorSites = (function() {
   function init(_reportCallback) {
     reportCallback = _reportCallback;
 
+    if (!window.onerror.errorSite) {
+      _onError = _onError || window.onerror;
+      window.onerror = onErrorRoot;
+
+      window.addEventListener('error', onError, true);
+    }
+
     if (!setTimeout.errorSite) {
       _setTimeout = setTimeout;
       window.setTimeout = function(callback, duration) {
@@ -56,6 +63,11 @@ this.ErrorSites = (function() {
   }
   function cleanup() {
     reportCallback = undefined;
+    if (window.onerror.errorSite) {
+      window.onerror = _onError;
+
+      window.removeEventListener('error', onError, true);
+    }
     if (setTimeout.errorSite) {
       window.setTimeout = _setTimeout;
     }
@@ -99,6 +111,58 @@ this.ErrorSites = (function() {
     };
   }
 
+  function onError(errorMsg, url, lineNumber, error) {
+    var type = 'javascript';
+
+    // Handle ErrorEvent if we receieve it
+    if (errorMsg && errorMsg.message) {
+      url = errorMsg.filename;
+      lineNumber = errorMsg.lineno;
+      error = errorMsg.error;
+      errorMsg = errorMsg.message;
+    }
+
+    if (errorMsg === 'Script error.' && !url) {
+      // Ignore untrackable external errors locally
+      return;
+    }
+
+    // This is a real event handler vs. the onerror special case.
+    // Since some browsers decide to treat window.onerror as the error event handler,
+    // we have to be prepared for either case
+    if (errorMsg && errorMsg.srcElement) {
+      // Don't submit duplciate events (and if we weren't already tracking
+      // it, it probably wasn't that important)
+      if (errorMsg.defaultPrevented || errorMsg.errorSiteHandled) {
+        return;
+      }
+
+      errorMsg.errorSiteHandled = true;
+      url = url || errorMsg.srcElement.src || errorMsg.srcElement.href;
+      type = errorMsg.srcElement.tagName.toLowerCase();
+      errorMsg = 'load-failed';
+    }
+
+    // Error argument added to the spec. Adding support so we can catch this as it rolls out
+    // http://html5.org/tools/web-apps-tracker?from=8085&to=8086
+    reportCallback({
+      name: currentSection,
+      url: url,
+      line: lineNumber,
+      type: type,
+
+      // Cast error message to string as it sometimes can come through with objects, particularly DOM objects
+      // containing circular references.
+      msg: errorMsg+''
+    }, error);
+  }
+
+  function onErrorRoot(errorMsg, url, lineNumber, error) {
+    _onError && _onError(errorMsg, url, lineNumber, error);
+    onError(errorMsg, url, lineNumber, error);
+  }
+  onErrorRoot.errorSite = true;
+
   return {
     init: init,
     cleanup: cleanup,
@@ -109,5 +173,6 @@ this.ErrorSites = (function() {
     run: function(name, callback) {
       section(name, callback)();
     },
+    onError: onError
   };
 })();

@@ -1,0 +1,2 @@
+function{}
+// Invalid js file
