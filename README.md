@@ -43,7 +43,7 @@ var callback = Costanza.section('another-unique-name', function() {
 Anonomyous sections may be created within other known sections. When these child sections execute, they will do so using the same identifier pased to the parent section. This is done automatically for callbacks passed to `setTimeout`, `setInterval`, and `addEventListener` by default.
 
 ```javascript
-Costanza.run('another-unique-name', function() {
+Costanza.run('yet-another-unique-name', function() {
   setTimeout(function() {
     // A later bang!
   }, 1000);
@@ -57,6 +57,12 @@ This code hijacks majors portions of built-in prototype objects. This should fai
 Costanza.init(function(info, rawError) {
   $.ajax();
 }, {safeMode: true});
+
+Costanza.run('still-yet-another-unique-name', function() {
+  setTimeout(Costanza.segment('still-yet-another-unique-name', function() {
+    // A later bang!
+  }), 1000);
+});
 ```
 
 ## Hall of Shame
