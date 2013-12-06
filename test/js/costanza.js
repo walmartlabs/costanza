@@ -2,7 +2,8 @@
 sinon.config.useFakeTimers = undefined;
 
 describe('costanza', function() {
-  var spy,
+  var error = new Error('Failure is always an option'),
+      spy,
       errorSpy,
       _onError = window.onerror;
   beforeEach(function() {
@@ -30,9 +31,15 @@ describe('costanza', function() {
     });
     it('report errors', function() {
       Costanza.run('fail!', function() {
-        throw new Error('Failure is always an option');
+        throw error;
       });
-      expect(spy).to.have.been.calledWith('fail!', new Error('Failure is always an option'));
+      expect(spy).to.have.been.calledWith({
+          type: 'javascript',
+          section: 'fail!',
+          msg: 'Failure is always an option',
+          stack: error.stack
+        },
+        error);
     });
     it('should restore the site', function() {
       var section1 = Costanza.section('success', function() {
@@ -46,31 +53,36 @@ describe('costanza', function() {
       });
       var section3 = Costanza.section('fail!', function() {
         expect(Costanza.current()).to.equal('fail!');
-        throw new Error('Failure is always an option');
+        throw error;
       });
       section1();
-      expect(spy).to.have.been.calledWith('fail!', new Error('Failure is always an option'));
+      expect(spy).to.have.been.calledWith({
+          type: 'javascript',
+          section: 'fail!',
+          msg: 'Failure is always an option',
+          stack: error.stack
+        }, error);
     });
   });
 
   describe('#onerror', function() {
     it('should handle error strings', function() {
       Costanza.onError('foo', 'bar', 1);
-      expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'});
+      expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined});
     });
     it('should handle error objects', function() {
       Costanza.onError('foo', 'bar', 1, {foo: true});
-      expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'}, {foo: true});
+      expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined}, {foo: true});
     });
     it('should handle ErrorEvents', function() {
       Costanza.onError({message: 'foo', lineno: 1, filename: 'bar'});
-      expect(spy).to.have.been.calledWith({type: 'javascript', name: 'global', url: 'bar', line: 1, msg: 'foo'});
+      expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined});
     });
 
     describe('loading errors', function() {
       it('should handle image load errors', function(done) {
         Costanza.init(function(info, err) {
-          expect(info.name).to.equal('global');
+          expect(info.section).to.equal('global');
           expect(info.type).to.equal('img');
           expect(info.url).to.match(/\/not-found.png$/);
           done();
@@ -82,7 +94,7 @@ describe('costanza', function() {
       });
       it('should handle script load errors', function(done) {
         Costanza.init(function(info, err) {
-          expect(info.name).to.equal('global');
+          expect(info.section).to.equal('global');
           expect(info.type).to.equal('script');
           expect(info.url).to.match(/\/not-found.js$/);
           done();
@@ -94,7 +106,7 @@ describe('costanza', function() {
       });
       it('should handle script load errors', function(done) {
         Costanza.init(function(info, err) {
-          expect(info.name).to.equal('global');
+          expect(info.section).to.equal('global');
           expect(info.type).to.equal('javascript');
           expect(info.url).to.match(/\/invalid.js$/);
           done();
@@ -107,7 +119,7 @@ describe('costanza', function() {
 
       it('should handle link load errors', function(done) {
         Costanza.init(function(info, err) {
-          expect(info.name).to.equal('global');
+          expect(info.section).to.equal('global');
           expect(info.type).to.equal('link');
           expect(info.url).to.match(/\/not-found.css$/);
           done();
@@ -122,7 +134,7 @@ describe('costanza', function() {
 
       it('should handle video not found errors', function(done) {
         Costanza.init(function(info, err) {
-          expect(info.name).to.equal('global');
+          expect(info.section).to.equal('global');
           expect(info.type).to.equal('video');
           expect(info.url).to.match(/\/not-found.mpg$/);
           done();
@@ -135,7 +147,7 @@ describe('costanza', function() {
 
       it('should handle video load errors', function(done) {
         Costanza.init(function(info, err) {
-          expect(info.name).to.equal('global');
+          expect(info.section).to.equal('global');
           expect(info.type).to.equal('video');
           expect(info.url).to.match(/\/invalid.js$/);
           done();
@@ -155,8 +167,8 @@ describe('costanza', function() {
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
-      Costanza.init(function(name, err) {
-        expect(name).to.equal('global');
+      Costanza.init(function(info, err) {
+        expect(info.section).to.equal('global');
         expect(err.message).to.equal('It failed');
         done();
       });
@@ -166,8 +178,8 @@ describe('costanza', function() {
       }, 10);
     });
     it('should include current catch tag', function(done) {
-      Costanza.init(function(name, err) {
-        expect(name).to.equal('tracked!');
+      Costanza.init(function(info, err) {
+        expect(info.section).to.equal('tracked!');
         expect(err.message).to.equal('It failed');
         done();
       });
@@ -194,10 +206,10 @@ describe('costanza', function() {
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
-      Costanza.init(function(name, err) {
+      Costanza.init(function(info, err) {
         clearInterval(interval);
 
-        expect(name).to.equal('global');
+        expect(info.section).to.equal('global');
         expect(err.message).to.equal('It failed');
         done();
       });
@@ -207,10 +219,10 @@ describe('costanza', function() {
       }, 10);
     });
     it('should include current catch tag', function(done) {
-      Costanza.init(function(name, err) {
+      Costanza.init(function(info, err) {
         clearInterval(interval);
 
-        expect(name).to.equal('tracked!');
+        expect(info.section).to.equal('tracked!');
         expect(err.message).to.equal('It failed');
         done();
       });
@@ -244,7 +256,7 @@ describe('costanza', function() {
 
       expect(spy)
           .to.have.been.calledOnce
-          .to.have.been.calledWith('global', new Error('It failed'));
+          .to.have.been.calledWith(sinon.match({section: 'global'}), new Error('It failed'));
     });
     it('should include current catch tag', function() {
       var el = document.createElement('div');
@@ -258,7 +270,7 @@ describe('costanza', function() {
 
       expect(spy)
           .to.have.been.calledOnce
-          .to.have.been.calledWith('tracked!', new Error('It failed'));
+          .to.have.been.calledWith(sinon.match({section: 'tracked!'}), new Error('It failed'));
     });
     it('should remove event listeners', function() {
       var el = document.createElement('div'),

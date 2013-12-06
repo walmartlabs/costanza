@@ -10,7 +10,7 @@ this.Costanza = (function() {
       _addEventListener,
       _removeEventListener;
 
-  function init(_reportCallback) {
+  function init(_reportCallback, options) {
     reportCallback = _reportCallback;
 
     if (!window.onerror.errorSite) {
@@ -18,6 +18,11 @@ this.Costanza = (function() {
       window.onerror = onErrorRoot;
 
       window.addEventListener('error', onError, true);
+    }
+
+    // Allow users to opt out of the native prototype augmentation.
+    if (options && options.safeMode) {
+      return;
     }
 
     if (!setTimeout.errorSite) {
@@ -106,7 +111,12 @@ this.Costanza = (function() {
 
         callback.apply(this, arguments);
       } catch (err) {
-        reportCallback(currentSection, err);
+        reportCallback({
+          type: 'javascript',
+          section: currentSection,
+          msg: err.message,
+          stack: err.stack
+        }, err);
       } finally {
         currentSection = priorSite;
       }
@@ -148,14 +158,15 @@ this.Costanza = (function() {
     // Error argument added to the spec. Adding support so we can catch this as it rolls out
     // http://html5.org/tools/web-apps-tracker?from=8085&to=8086
     reportCallback({
-      name: currentSection,
+      section: currentSection,
       url: url,
       line: lineNumber,
       type: type,
 
       // Cast error message to string as it sometimes can come through with objects, particularly DOM objects
       // containing circular references.
-      msg: errorMsg+''
+      msg: errorMsg+'',
+      stack: error && error.stack
     }, error);
   }
 
