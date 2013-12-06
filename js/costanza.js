@@ -1,8 +1,12 @@
-/*global HTMLDocument, Window */
+/*global HTMLDocument, Window, console */
 this.Costanza = (function() {
   "use strict";
 
-  var reportCallback,
+  function defaultReporter(info, err) {
+    console.error('Costanza error', info);
+  }
+
+  var reportCallback = defaultReporter,
       currentSection = 'global',
       _onError,
       _setTimeout,
@@ -11,7 +15,7 @@ this.Costanza = (function() {
       _removeEventListener;
 
   function init(_reportCallback, options) {
-    reportCallback = _reportCallback;
+    reportCallback = _reportCallback || defaultReporter;
 
     if (!window.onerror || !window.onerror.errorSite) {
       _onError = _onError || window.onerror;
@@ -69,7 +73,7 @@ this.Costanza = (function() {
     }
   }
   function cleanup() {
-    reportCallback = undefined;
+    reportCallback = defaultReporter;
     if (window.onerror && window.onerror.errorSite) {
       window.onerror = _onError;
 
