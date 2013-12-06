@@ -1,7 +1,7 @@
 /*global HTMLDocument, Window */
 this.ErrorSites = (function() {
   var reportCallback,
-      currentSection,
+      currentSection = 'global',
       _onError,
       _setTimeout,
       _setInterval,

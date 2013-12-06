@@ -2,14 +2,21 @@
 sinon.config.useFakeTimers = undefined;
 
 describe('error-sites', function() {
-  var spy;
+  var spy,
+      errorSpy,
+      _onError = window.onerror;
   beforeEach(function() {
     spy = this.spy();
+
+    // Have to disable the default error handling to prevent failures in tests that are expecting
+    // them
+    window.onerror = errorSpy = this.spy();
 
     ErrorSites.init(spy);
   });
   afterEach(function() {
     ErrorSites.cleanup();
+    window.onerror = _onError;
   });
 
   describe('#section', function() {
@@ -34,7 +41,7 @@ describe('error-sites', function() {
         expect(ErrorSites.current()).to.equal('success');
       });
       var section2 = ErrorSites.section(function() {
-        expect(ErrorSites.current()).to.not.exist;
+        expect(ErrorSites.current()).to.equal('global');
         section3();
       });
       var section3 = ErrorSites.section('fail!', function() {
