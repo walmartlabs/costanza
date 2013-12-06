@@ -17,7 +17,7 @@ this.Costanza = (function() {
   function init(_reportCallback, options) {
     reportCallback = _reportCallback || defaultReporter;
 
-    if (!window.onerror || !window.onerror.errorSite) {
+    if (!window.onerror || !window.onerror._costanza) {
       _onError = _onError || window.onerror;
       window.onerror = onErrorRoot;
 
@@ -29,36 +29,36 @@ this.Costanza = (function() {
       return;
     }
 
-    if (!setTimeout.errorSite) {
+    if (!setTimeout._costanza) {
       _setTimeout = setTimeout;
       window.setTimeout = function(callback, duration) {
         return _setTimeout(bind(callback), duration);
       };
-      setTimeout.errorSite = true;
+      setTimeout._costanza = true;
     }
 
-    if (!setInterval.errorSite) {
+    if (!setInterval._costanza) {
       _setInterval = setInterval;
       window.setInterval = function(callback, interval) {
         return _setInterval(bind(callback), interval);
       };
-      setInterval.errorSite = true;
+      setInterval._costanza = true;
     }
 
-    if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener.errorSite) {
+    if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener._costanza) {
       _addEventListener = Element.prototype.addEventListener;
       var addEventListener = function(type, callback, useCapture) {
         callback._section = callback._section || bind(callback);
         _addEventListener.call(this, type, callback._section, useCapture);
       };
-      addEventListener.errorSite = true;
+      addEventListener._costanza = true;
       Element.prototype.addEventListener = addEventListener;
 
       _removeEventListener = Element.prototype.removeEventListener;
       var removeEventListener = function(type, callback, useCapture) {
         _removeEventListener.call(this, type, callback._section || callback, useCapture);
       };
-      removeEventListener.errorSite = true;
+      removeEventListener._costanza = true;
       Element.prototype.removeEventListener = removeEventListener;
 
       if (window.HTMLDocument) {
@@ -74,18 +74,18 @@ this.Costanza = (function() {
   }
   function cleanup() {
     reportCallback = defaultReporter;
-    if (window.onerror && window.onerror.errorSite) {
+    if (window.onerror && window.onerror._costanza) {
       window.onerror = _onError;
 
       window.removeEventListener('error', onError, true);
     }
-    if (setTimeout.errorSite) {
+    if (setTimeout._costanza) {
       window.setTimeout = _setTimeout;
     }
-    if (setInterval.errorSite) {
+    if (setInterval._costanza) {
       window.setInterval = _setInterval;
     }
-    if (window.Element && Element.prototype.addEventListener && Element.prototype.addEventListener.errorSite) {
+    if (window.Element && Element.prototype.addEventListener && Element.prototype.addEventListener._costanza) {
       Element.prototype.addEventListener = _addEventListener;
       Element.prototype.removeEventListener = _removeEventListener;
 
@@ -149,11 +149,11 @@ this.Costanza = (function() {
     if (errorMsg && errorMsg.srcElement) {
       // Don't submit duplciate events (and if we weren't already tracking
       // it, it probably wasn't that important)
-      if (errorMsg.defaultPrevented || errorMsg.errorSiteHandled) {
+      if (errorMsg.defaultPrevented || errorMsg._costanzaHandled) {
         return;
       }
 
-      errorMsg.errorSiteHandled = true;
+      errorMsg._costanzaHandled = true;
       url = url || errorMsg.srcElement.src || errorMsg.srcElement.href;
       type = errorMsg.srcElement.tagName.toLowerCase();
       errorMsg = 'load-failed';
@@ -178,7 +178,7 @@ this.Costanza = (function() {
     _onError && _onError(errorMsg, url, lineNumber, error);
     onError(errorMsg, url, lineNumber, error);
   }
-  onErrorRoot.errorSite = true;
+  onErrorRoot._costanza = true;
 
   return {
     init: init,
