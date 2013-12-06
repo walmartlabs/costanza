@@ -13,7 +13,7 @@ this.Costanza = (function() {
   function init(_reportCallback, options) {
     reportCallback = _reportCallback;
 
-    if (!window.onerror.errorSite) {
+    if (!window.onerror || !window.onerror.errorSite) {
       _onError = _onError || window.onerror;
       window.onerror = onErrorRoot;
 
@@ -70,7 +70,7 @@ this.Costanza = (function() {
   }
   function cleanup() {
     reportCallback = undefined;
-    if (window.onerror.errorSite) {
+    if (window.onerror && window.onerror.errorSite) {
       window.onerror = _onError;
 
       window.removeEventListener('error', onError, true);
