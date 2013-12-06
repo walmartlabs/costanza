@@ -182,6 +182,9 @@ this.Costanza = (function() {
     current: function() {
       return currentSection;
     },
+    emit: function(info, error) {
+      reportCallback(info, error);
+    },
     section: section,
     run: function(name, callback) {
       section(name, callback)();
