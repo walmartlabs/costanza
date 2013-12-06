@@ -10,9 +10,7 @@ this.Costanza = (function() {
       currentSection = 'global',
       _onError,
       _setTimeout,
-      _setInterval,
-      _addEventListener,
-      _removeEventListener;
+      _setInterval;
 
   function init(_reportCallback, options) {
     reportCallback = _reportCallback || defaultReporter;
@@ -46,39 +44,40 @@ this.Costanza = (function() {
     }
 
     if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener._costanza) {
-      _addEventListener = Element.prototype.addEventListener;
-      var addEventListener = function(type, callback, useCapture) {
-        callback._section = callback._section || bind(callback);
-        _addEventListener.call(this, type, callback._section, useCapture);
-      };
-      addEventListener._costanza = true;
-      Element.prototype.addEventListener = addEventListener;
 
-      _removeEventListener = Element.prototype.removeEventListener;
-      var removeEventListener = function(type, callback, useCapture) {
-        _removeEventListener.call(this, type, callback._section || callback, useCapture);
-      };
-      removeEventListener._costanza = true;
-      Element.prototype.removeEventListener = removeEventListener;
-
+      wrapListener(Element.prototype);
       if (window.HTMLDocument) {
-        HTMLDocument.prototype.addEventListener = addEventListener;
-        HTMLDocument.prototype.removeEventListener = removeEventListener;
+        wrapListener(HTMLDocument.prototype);
       }
-
       if (window.Window) {
-        Window.prototype.addEventListener = addEventListener;
-        Window.prototype.removeEventListener = removeEventListener;
+        wrapListener(Window.prototype);
       }
+    }
+
+    function wrapListener(proto) {
+      // We must pair the native implementation with the proper proto object as ios7 will throw
+      // if they are not.
+      proto._addEventListener = proto.addEventListener;
+      proto.addEventListener = function(type, callback, useCapture) {
+        callback._section = callback._section || bind(callback);
+        this._addEventListener(type, callback._section, useCapture);
+      };
+      proto.addEventListener._costanza = true;
+
+      proto._removeEventListener = proto.removeEventListener;
+      proto.removeEventListener = function(type, callback, useCapture) {
+        this._removeEventListener(type, callback._section || callback, useCapture);
+      };
+      proto.removeEventListener._costanza = true;
     }
   }
   function cleanup() {
-    reportCallback = defaultReporter;
-    if (window.onerror && window.onerror._costanza) {
-      window.onerror = _onError;
-
-      window.removeEventListener('error', onError, true);
+    function cleanupListener(proto) {
+      proto.addEventListener = proto._addEventListener;
+      proto.removeEventListener = proto._removeEventListener;
     }
+
+    reportCallback = defaultReporter;
     if (setTimeout._costanza) {
       window.setTimeout = _setTimeout;
     }
@@ -86,18 +85,19 @@ this.Costanza = (function() {
       window.setInterval = _setInterval;
     }
     if (window.Element && Element.prototype.addEventListener && Element.prototype.addEventListener._costanza) {
-      Element.prototype.addEventListener = _addEventListener;
-      Element.prototype.removeEventListener = _removeEventListener;
-
+      cleanupListener(Element.prototype);
       if (window.HTMLDocument) {
-        HTMLDocument.prototype.addEventListener = _addEventListener;
-        HTMLDocument.prototype.removeEventListener = _removeEventListener;
+        cleanupListener(HTMLDocument.prototype);
       }
-
       if (window.Window) {
-        Window.prototype.addEventListener = _addEventListener;
-        Window.prototype.removeEventListener = _removeEventListener;
+        cleanupListener(Window.prototype);
       }
+    }
+
+    if (window.onerror && window.onerror._costanza) {
+      window.onerror = _onError;
+
+      window.removeEventListener('error', onError, true);
     }
   }
 

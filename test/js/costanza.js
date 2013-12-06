@@ -285,5 +285,36 @@ describe('costanza', function() {
 
       expect(spy).to.not.have.been.called;
     });
+
+    it('should handle events on the window object', function() {
+      var error = new Error('It failed'),
+          handler = function() { throw error; };
+      window.addEventListener('click', handler);
+
+      var event = new Event('click');
+      window.dispatchEvent(event);
+
+      expect(spy)
+          .to.have.been.calledOnce
+          .to.have.been.calledWith(sinon.match({section: 'global'}), error);
+
+      window.removeEventListener('click', handler);
+      expect(spy).to.have.been.calledOnce;
+    });
+    it('should handle events on the document object', function() {
+      var error = new Error('It failed'),
+          handler = function() { throw error; };
+      document.addEventListener('click', handler);
+
+      var event = new Event('click');
+      document.dispatchEvent(event);
+
+      expect(spy)
+          .to.have.been.calledOnce
+      expect(spy).to.have.been.calledWith(sinon.match({section: 'global'}), error);
+
+      document.removeEventListener('click', handler);
+      expect(spy).to.have.been.calledOnce;
+    });
   });
 });
