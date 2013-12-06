@@ -35,7 +35,7 @@ Costanza.run('unique-name', function() {
 Callbacks may also be created with sections for later execution:
 
 ```javascript
-var callback = Costanza.section('another-unique-name', function() {
+var callback = Costanza.bind('another-unique-name', function() {
   // Bang!
 });
 ```
@@ -59,7 +59,7 @@ Costanza.init(function(info, rawError) {
 }, {safeMode: true});
 
 Costanza.run('still-yet-another-unique-name', function() {
-  setTimeout(Costanza.segment('still-yet-another-unique-name', function() {
+  setTimeout(Costanza.bind('still-yet-another-unique-name', function() {
     // A later bang!
   }), 1000);
 });

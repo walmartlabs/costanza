@@ -1,3 +1,4 @@
+/*global Costanza */
 function bindEventHandler(eventName, params) {
   eventName += params.originalName;
 
@@ -9,7 +10,7 @@ function bindEventHandler(eventName, params) {
 
   var context = params.context || this,
       section = 'thorax-exception: ' + (context.name || context.cid) + ':' + eventName,
-      ret = Costanza.section(section, _.bind(method, context));
+      ret = Costanza.bind(section, _.bind(method, context));
 
   // Backbone will delegate to _callback in off calls so we should still be able to support
   // calling off on specific handlers.

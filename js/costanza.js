@@ -28,7 +28,7 @@ this.Costanza = (function() {
     if (!setTimeout.errorSite) {
       _setTimeout = setTimeout;
       window.setTimeout = function(callback, duration) {
-        return _setTimeout(section(callback), duration);
+        return _setTimeout(bind(callback), duration);
       };
       setTimeout.errorSite = true;
     }
@@ -36,7 +36,7 @@ this.Costanza = (function() {
     if (!setInterval.errorSite) {
       _setInterval = setInterval;
       window.setInterval = function(callback, interval) {
-        return _setInterval(section(callback), interval);
+        return _setInterval(bind(callback), interval);
       };
       setInterval.errorSite = true;
     }
@@ -44,7 +44,7 @@ this.Costanza = (function() {
     if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener.errorSite) {
       _addEventListener = Element.prototype.addEventListener;
       var addEventListener = function(type, callback, useCapture) {
-        callback._section = callback._section || section(callback);
+        callback._section = callback._section || bind(callback);
         _addEventListener.call(this, type, callback._section, useCapture);
       };
       addEventListener.errorSite = true;
@@ -97,7 +97,7 @@ this.Costanza = (function() {
     }
   }
 
-  function section(name, callback) {
+  function bind(name, callback) {
     if (!callback) {
       callback = name;
       name = currentSection;
@@ -185,9 +185,9 @@ this.Costanza = (function() {
     emit: function(info, error) {
       reportCallback(info, error);
     },
-    section: section,
+    bind: bind,
     run: function(name, callback) {
-      section(name, callback)();
+      bind(name, callback)();
     },
     onError: onError
   };

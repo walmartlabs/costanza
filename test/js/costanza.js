@@ -20,7 +20,7 @@ describe('costanza', function() {
     window.onerror = _onError;
   });
 
-  describe('#section', function() {
+  describe('#bind', function() {
     it('should run callback', function() {
       var callback = this.spy();
       Costanza.run(callback);
@@ -42,16 +42,16 @@ describe('costanza', function() {
         error);
     });
     it('should restore the site', function() {
-      var section1 = Costanza.section('success', function() {
+      var section1 = Costanza.bind('success', function() {
         expect(Costanza.current()).to.equal('success');
         section2();
         expect(Costanza.current()).to.equal('success');
       });
-      var section2 = Costanza.section(function() {
+      var section2 = Costanza.bind(function() {
         expect(Costanza.current()).to.equal('global');
         section3();
       });
-      var section3 = Costanza.section('fail!', function() {
+      var section3 = Costanza.bind('fail!', function() {
         expect(Costanza.current()).to.equal('fail!');
         throw error;
       });
