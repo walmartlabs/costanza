@@ -4,8 +4,11 @@
       "topLevelName": "Phoenix",
 
       "mixins": [
+        "thorax-dep-zepto",
+        "thorax",
         "costanza",
-        "costanza-zepto"
+        "costanza-zepto",
+        "costanza-thorax"
       ],
       "scripts": [
         {"src": "underscore.js", "bower": "underscore", "global": true}

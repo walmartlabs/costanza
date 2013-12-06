@@ -10,7 +10,11 @@
     "tests"
   ],
   "devDependencies": {
+    "backbone": "~1.0.0",
+    "handlebars": "~1.1.2",
     "lumbar-loader": "~1.2.5",
-    "underscore": "~1.5.2"
+    "thorax": "walmartlabs/thorax#~2.1.5",
+    "underscore": "~1.5.2",
+    "zepto": "~1.0.0"
   }
 }
