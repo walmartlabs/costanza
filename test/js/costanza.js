@@ -284,8 +284,4 @@ describe('costanza', function() {
       expect(spy).to.not.have.been.called;
     });
   });
-  describe('on attribute handlers', function() {
-    it('should catch errors');
-    it('should include current catch tag');
-  });
 });
