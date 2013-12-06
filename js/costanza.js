@@ -107,7 +107,11 @@ this.Costanza = (function() {
       name = currentSection;
     }
 
-    return function() {
+    if (callback._costanza) {
+      return callback;
+    }
+
+    var ret = function() {
       var priorSite = currentSection;
 
       try {
@@ -125,6 +129,8 @@ this.Costanza = (function() {
         currentSection = priorSite;
       }
     };
+    ret._costanza = true;
+    return ret;
   }
 
   function onError(errorMsg, url, lineNumber, error) {
