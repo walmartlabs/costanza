@@ -3,7 +3,14 @@ this.Costanza = (function() {
   "use strict";
 
   function defaultReporter(info, err) {
-    console.error('Costanza error', info);
+    /*jshint eqnull:true */
+    console.error('Costanza error:'
+          + '\n  type: ' + info.type
+          + '\n  section: ' + info.section
+          + (info.url ? '\n  url: ' + info.url : '')
+          + (info.line != null ? '\n  line: ' + info.line : '')
+          + ((info.stack && info.stack.indexOf(info.msg) < 0) ? '\n\n' + info.msg : ''),
+          + '\n\n' + (info.stack || info.msg));
   }
 
   var reportCallback = defaultReporter,
