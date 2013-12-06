@@ -23,7 +23,7 @@ describe('costanza-thorax', function() {
     view.trigger('thorax');
     expect(spy).to.have.been.calledWith({
         type: 'javascript',
-        section: 'thorax-exception: test:view-event:thorax',
+        section: 'thorax-exception: test ;; view-event:thorax',
         msg: 'It failed!',
         stack: error.stack
       },
