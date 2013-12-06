@@ -1,5 +1,7 @@
 /*global HTMLDocument, Window */
 this.ErrorSites = (function() {
+  "use strict";
+
   var reportCallback,
       currentSection = 'global',
       _onError,
