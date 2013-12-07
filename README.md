@@ -129,6 +129,28 @@ Emits a custom event to the error handler callback.
 
 Removes any overrides that may have been performed. Calling this method is unnecessary under most circumstances.
 
+## Platforms
+
+Tested platforms include:
+
+Desktop:
+- Chrome: Latest
+- Firefox: Latest
+- Safari: 7+
+- IE: 10+
+- Opera: 12+
+
+Mobile:
+- iOS: 4.2+
+- Android: 2.3+
+- Windows Phone: 8+
+
+Not all features are supported on all platforms and the log messages will vary by platform.
+
+- Support for `error` events for for loading vary greatly by browser. [@yaypie][yaypie] has put together a good [listing][error_support] of supporting browsers for these events.
+- [Android 2.x][android_onerror] does not `window.onerror` generic handling.
+- Opera 12 does not appear to support tracking of SyntaxErrors via `window.onerror`
+
 ## Hall of Shame
 
 The following are exceptions seen in the wild that appear to be thrown by 3rd party extensions or proxy injected code. Don't let friends inject buggy code... or any for that matter.
@@ -163,3 +185,6 @@ George Costanza (of Seinfeld fame) was the [master of his domain](http://en.wiki
 
 [node_domains]: http://nodejs.org/api/domain.html
 [pull_request]: https://github.com/walmartlabs/costanza/pulls
+[android_onerror]: https://code.google.com/p/android/issues/detail?id=15680
+[yaypie]: https://twitter.com/yaypie
+[error_support]: http://pieisgood.org/test/script-link-events/
