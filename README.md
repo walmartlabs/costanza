@@ -155,7 +155,7 @@ Command line:
 Interactive:
 
     jake watch
-    brower http://machine.name:8080/test.html
+    $browser http://machine.name:8080/test.html
 
 ## Why is this called Costanza?
 
