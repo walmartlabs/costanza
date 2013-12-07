@@ -81,6 +81,10 @@ describe('costanza', function() {
 
     describe('loading errors', function() {
       it('should handle image load errors', function(done) {
+        if ($.browser.firefox) {
+          return done();
+        }
+
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('img');
@@ -93,6 +97,10 @@ describe('costanza', function() {
         document.getElementById('qunit-fixture').appendChild(img);
       });
       it('should handle script load errors', function(done) {
+        if ($.browser.firefox) {
+          return done();
+        }
+
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('script');
@@ -104,7 +112,17 @@ describe('costanza', function() {
         script.src = '/not-found.js';
         document.getElementById('qunit-fixture').appendChild(script);
       });
-      it('should handle script load errors', function(done) {
+      it('should handle script parse errors', function(done) {
+        if (($.os.android && parseFloat($.os.version) < 3)
+            || /Opera\//.test(navigator.userAgent)
+            || window.mochaPhantomJS) {
+          // window.onerror is not supported by android 2.3
+          // https://code.google.com/p/android/issues/detail?id=15680
+          // Opera doesn't seem to trigger this for syntax errors specifically
+          // Mocha phantom aborts the tests if this occurs.
+          return done();
+        }
+
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('javascript');
@@ -118,6 +136,13 @@ describe('costanza', function() {
       });
 
       it('should handle link load errors', function(done) {
+        if (($.browser.webkit || parseFloat($.browser.version) < 535)
+            || !($.browser.webkit || $.browser.firefox)) {
+          // Attempt to filter on stylesheet error support per
+          // http://pieisgood.org/test/script-link-events/
+          return done();
+        }
+
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('link');
@@ -133,6 +158,12 @@ describe('costanza', function() {
       });
 
       it('should handle video not found errors', function(done) {
+        if ($.os.phone || $.browser.firefox || $.os.android) {
+          // Most phones dump to an external app for video, so ignore for the sake of tests
+          // Firefox generally doesn't support capturing error events
+          return done();
+        }
+
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('video');
@@ -146,6 +177,12 @@ describe('costanza', function() {
       });
 
       it('should handle video load errors', function(done) {
+        if ($.os.phone || $.browser.firefox || $.os.android) {
+          // Most phones dump to an external app for video, so ignore for the sake of tests
+          // Firefox generally doesn't support capturing error events
+          return done();
+        }
+
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('video');
@@ -235,86 +272,122 @@ describe('costanza', function() {
     });
   });
   describe('addEventListener', function() {
+    var el;
+    afterEach(function() {
+      if (el) {
+        el.parentNode.removeChild(el);
+        el = undefined;
+      }
+    });
+
     it('should execute event listeners', function() {
-      var el = document.createElement('div'),
-          spy = this.spy();
+      var spy = this.spy();
+
+      el = document.createElement('div');
       el.addEventListener('click', spy);
 
-      var event = new Event('click');
-      el.dispatchEvent(event);
+      document.body.appendChild(el);
+      click(el);
 
-      expect(spy)
-          .to.have.been.calledOnce
-          .to.have.been.calledWith(event);
+      expect(spy).to.have.been.calledOnce;
     });
     it('should catch errors', function() {
-      var el = document.createElement('div'),
-          error = new Error('It failed');
+      var error = new Error('It failed');
+
+      el = document.createElement('div');
       el.addEventListener('click', function() { throw error; });
 
-      var event = new Event('click');
-      el.dispatchEvent(event);
+      document.body.appendChild(el);
+      click(el);
 
       expect(spy)
           .to.have.been.calledOnce
           .to.have.been.calledWith(sinon.match({section: 'global'}), error);
     });
     it('should include current catch tag', function() {
-      var el = document.createElement('div'),
-          error = new Error('It failed');
+      var error = new Error('It failed');
 
+      el = document.createElement('div');
       Costanza.run('tracked!', function() {
         el.addEventListener('click', function() { throw error; });
       });
 
-      var event = new Event('click');
-      el.dispatchEvent(event);
+      document.body.appendChild(el);
+      click(el);
 
       expect(spy)
           .to.have.been.calledOnce
           .to.have.been.calledWith(sinon.match({section: 'tracked!'}), error);
     });
     it('should remove event listeners', function() {
-      var el = document.createElement('div'),
-          spy = this.spy();
+      var spy = this.spy();
+
+      el = document.createElement('div');
       el.addEventListener('click', spy);
       el.removeEventListener('click', spy);
 
-      var event = new Event('click');
-      el.dispatchEvent(event);
+      document.body.appendChild(el);
+      click(el);
 
       expect(spy).to.not.have.been.called;
     });
 
     it('should handle events on the window object', function() {
-      var error = new Error('It failed'),
-          handler = function() { throw error; };
-      window.addEventListener('click', handler);
+      Costanza.run('caught!', function() {
+        var error = new Error('It failed'),
+            handler = this.spy(function() { throw error; });
+        window.addEventListener('click', handler);
 
-      var event = new Event('click');
-      window.dispatchEvent(event);
+        var event = createEvent('click');
+        window.dispatchEvent(event);
 
-      expect(spy)
-          .to.have.been.calledOnce
-          .to.have.been.calledWith(sinon.match({section: 'global'}), error);
+        expect(spy)
+            .to.have.been.calledOnce
+            .to.have.been.calledWith(sinon.match({section: 'caught!'}), error);
+        expect(handler).to.have.been.calledOnce;
 
-      window.removeEventListener('click', handler);
-      expect(spy).to.have.been.calledOnce;
+        window.removeEventListener('click', handler);
+
+        window.dispatchEvent(event);
+        expect(spy).to.have.been.calledOnce;
+        expect(handler).to.have.been.calledOnce;
+      });
     });
     it('should handle events on the document object', function() {
-      var error = new Error('It failed'),
-          handler = function() { throw error; };
-      document.addEventListener('click', handler);
+      Costanza.run('caught!', function() {
+        var error = new Error('It failed'),
+            handler = function() { throw error; };
+        document.addEventListener('click', handler, true);
 
-      var event = new Event('click');
-      document.dispatchEvent(event);
+        el = document.createElement('div');
+        document.body.appendChild(el);
+        click(el);
 
-      expect(spy)
-          .to.have.been.calledOnce
-      expect(spy).to.have.been.calledWith(sinon.match({section: 'global'}), error);
+        expect(spy)
+            .to.have.been.calledOnce
+            .to.have.been.calledWith(sinon.match({section: 'caught!'}), error);
+        expect(handler).to.have.been.calledOnce;
 
-      document.removeEventListener('click', handler);
-      expect(spy).to.have.been.calledOnce;
+        document.removeEventListener('click', handler, true);
+
+        el.click();
+        expect(spy).to.have.been.calledOnce;
+        expect(handler).to.have.been.calledOnce;
+      });
     });
   });
+
+  function click(el) {
+    if (el.click) {
+      el.click();
+    } else {
+      try {
+        event = new Event('click');
+      } catch (err) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+      }
+      el.dispatchEvent(event);
+    }
+  }
 });
