@@ -53,8 +53,9 @@ this.Costanza = (function() {
     if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener._costanza) {
 
       wrapListener(Element.prototype);
-      if (window.HTMLDocument) {
-        wrapListener(HTMLDocument.prototype);
+      if (window.HTMLDocument || window.Document) {
+        // IE10: Document, others are HTMLDocument
+        wrapListener((window.HTMLDocument || window.Document).prototype);
       }
       if (window.Window) {
         wrapListener(Window.prototype);
