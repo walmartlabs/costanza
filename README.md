@@ -144,6 +144,7 @@ Mobile:
 - iOS: 4.2+
 - Android: 2.3+
 - Windows Phone: 8+
+- Blackberry: 6.0+
 
 Not all features are supported on all platforms and the log messages will vary by platform.
 
