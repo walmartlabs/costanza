@@ -125,7 +125,7 @@ this.Costanza = (function() {
       try {
         currentSection = name;
 
-        callback.apply(this, arguments);
+        return callback.apply(this, arguments);
       } catch (err) {
         reportCallback({
           type: 'javascript',
