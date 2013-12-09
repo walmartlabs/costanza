@@ -106,7 +106,8 @@ describe('costanza', function() {
         document.getElementById('qunit-fixture').appendChild(img);
       });
       it('should handle script load errors', function(done) {
-        if ($.browser.firefox) {
+        if ($.browser.firefox
+            || window.mochaPhantomJS) {
           return done();
         }
 
@@ -350,7 +351,11 @@ describe('costanza', function() {
     });
 
     it('should handle events on the window object', function(done) {
-      var error = new Error('It failed'),
+      if (!window.Window) {
+        return done();
+      }
+
+      var error = new Error('It failed: window'),
           handler = this.spy(function() { throw error; });
 
       Costanza.run('caught!', function() {
@@ -372,7 +377,7 @@ describe('costanza', function() {
       });
     });
     it('should handle events on the document object', function(done) {
-      var error = new Error('It failed'),
+      var error = new Error('It failed: doc'),
           handler = this.spy(function() { throw error; });
 
       Costanza.run('caught!', function() {
