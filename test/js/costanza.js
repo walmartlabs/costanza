@@ -1,6 +1,4 @@
 /*global Costanza, Event */
-sinon.config.useFakeTimers = undefined;
-
 describe('costanza', function() {
   var error = new Error('Failure is always an option'),
       spy,
@@ -12,6 +10,11 @@ describe('costanza', function() {
     // Have to disable the default error handling to prevent failures in tests that are expecting
     // them
     window.onerror = errorSpy = this.spy();
+
+    // Disable the sandbox if any as we want to actually hit the native impl
+    if (this.clock) {
+      this.clock.restore();
+    }
 
     Costanza.init(spy);
   });
