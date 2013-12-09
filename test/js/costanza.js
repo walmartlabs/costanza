@@ -24,15 +24,16 @@ describe('costanza', function() {
   });
 
   describe('#bind', function() {
-    it('should run callback', function() {
+    it('should run callback', function(done) {
       var callback = this.spy();
       Costanza.run(callback);
       expect(callback).to.have.been.calledOnce;
 
       Costanza.run('foo', callback);
       expect(callback).to.have.been.calledTwice;
+      done();
     });
-    it('report errors', function() {
+    it('report errors', function(done) {
       Costanza.run('fail!', function() {
         throw error;
       });
@@ -43,8 +44,9 @@ describe('costanza', function() {
           stack: error.stack
         },
         error);
+      done();
     });
-    it('should restore the site', function() {
+    it('should restore the site', function(done) {
       var section1 = Costanza.bind('success', function() {
         expect(Costanza.current()).to.equal('success');
         section2();
@@ -65,21 +67,25 @@ describe('costanza', function() {
           msg: 'Failure is always an option',
           stack: error.stack
         }, error);
+      done();
     });
   });
 
   describe('#onerror', function() {
-    it('should handle error strings', function() {
+    it('should handle error strings', function(done) {
       Costanza.onError('foo', 'bar', 1);
       expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined});
+      done();
     });
-    it('should handle error objects', function() {
+    it('should handle error objects', function(done) {
       Costanza.onError('foo', 'bar', 1, {foo: true});
       expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined}, {foo: true});
+      done();
     });
-    it('should handle ErrorEvents', function() {
+    it('should handle ErrorEvents', function(done) {
       Costanza.onError({message: 'foo', lineno: 1, filename: 'bar'});
       expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined});
+      done();
     });
 
     describe('loading errors', function() {
@@ -106,7 +112,11 @@ describe('costanza', function() {
 
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
-          expect(info.type).to.equal('script');
+
+          // This may be a javascript error if the host server has redirects for 404
+          if (info.type !== 'script' && info.type !== 'javascript') {
+            throw new Error('Unexpected type: ' + info.type);
+          }
           expect(info.url).to.match(/\/not-found.js$/);
           done();
         });
@@ -283,7 +293,7 @@ describe('costanza', function() {
       }
     });
 
-    it('should execute event listeners', function() {
+    it('should execute event listeners', function(done) {
       var spy = this.spy();
 
       el = document.createElement('div');
@@ -293,8 +303,9 @@ describe('costanza', function() {
       click(el);
 
       expect(spy).to.have.been.calledOnce;
+      done();
     });
-    it('should catch errors', function() {
+    it('should catch errors', function(done) {
       var error = new Error('It failed');
 
       el = document.createElement('div');
@@ -306,8 +317,9 @@ describe('costanza', function() {
       expect(spy)
           .to.have.been.calledOnce
           .to.have.been.calledWith(sinon.match({section: 'global'}), error);
+      done();
     });
-    it('should include current catch tag', function() {
+    it('should include current catch tag', function(done) {
       var error = new Error('It failed');
 
       el = document.createElement('div');
@@ -321,8 +333,9 @@ describe('costanza', function() {
       expect(spy)
           .to.have.been.calledOnce
           .to.have.been.calledWith(sinon.match({section: 'tracked!'}), error);
+      done();
     });
-    it('should remove event listeners', function() {
+    it('should remove event listeners', function(done) {
       var spy = this.spy();
 
       el = document.createElement('div');
@@ -333,16 +346,17 @@ describe('costanza', function() {
       click(el);
 
       expect(spy).to.not.have.been.called;
+      done();
     });
 
-    it('should handle events on the window object', function() {
+    it('should handle events on the window object', function(done) {
+      var error = new Error('It failed'),
+          handler = this.spy(function() { throw error; });
+
       Costanza.run('caught!', function() {
-        var error = new Error('It failed'),
-            handler = this.spy(function() { throw error; });
         window.addEventListener('click', handler);
 
-        var event = createEvent('click');
-        window.dispatchEvent(event);
+        click(window);
 
         expect(spy)
             .to.have.been.calledOnce
@@ -351,15 +365,17 @@ describe('costanza', function() {
 
         window.removeEventListener('click', handler);
 
-        window.dispatchEvent(event);
+        click(window);
         expect(spy).to.have.been.calledOnce;
         expect(handler).to.have.been.calledOnce;
+        done();
       });
     });
-    it('should handle events on the document object', function() {
+    it('should handle events on the document object', function(done) {
+      var error = new Error('It failed'),
+          handler = this.spy(function() { throw error; });
+
       Costanza.run('caught!', function() {
-        var error = new Error('It failed'),
-            handler = function() { throw error; };
         document.addEventListener('click', handler, true);
 
         el = document.createElement('div');
@@ -373,9 +389,10 @@ describe('costanza', function() {
 
         document.removeEventListener('click', handler, true);
 
-        el.click();
+        click(el);
         expect(spy).to.have.been.calledOnce;
         expect(handler).to.have.been.calledOnce;
+        done();
       });
     });
   });
