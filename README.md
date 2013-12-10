@@ -24,7 +24,7 @@ TypeError: 'undefined' is not an object
     at ret (http://localhost/base.js:1:9860)
 ```
 
-Showing that the error occurred in the `click .js-big-red-button` event handler of the throax `home` view as well as providing wthe stack trace associated with that event.
+Showing that the error occurred in the `click .js-big-red-button` event handler of the throax `home` view as well as providing the stack trace associated with that event.
 
 ## Features
 
@@ -46,7 +46,7 @@ Costanza.init(function(info, rawError) {
 });
 ```
 
-This is the minimum required to use the library, but the fidelity of the error tracking is greatly improved if code is associated with known sections. Sections allow for a unique name to be associated with a code execution path. Should an error occur within the section or one of it's anonymous sections, this unique name will be included in the error result, easing debugging.
+This is the minimum required to use the library, but the fidelity of the error tracking is greatly improved if code is associated with known sections. Sections allow for a unique name to be associated with a code execution path. Should an error occur within the section or one of its anonymous sections, this unique name will be included in the error result, easing debugging.
 
 The easiest way to create a section is with the `run` method, which will immediately execute.
 
@@ -74,11 +74,11 @@ Costanza.run('yet-another-unique-name', function() {
 });
 ```
 
-Ideally new named sections are created for any logical entry point into the system from the event loop. Things like DOM event handlers and ajax callbacks are prime candidates for creating named sections. Plugins such as costanza-thorax allow for doing this in an automated fashion. (Don't see a plugin for your framework of choice? [Send over a PR][pull_request]!
+Ideally new named sections are created for any logical entry point into the system from the event loop. Things like DOM event handlers and ajax callbacks are prime candidates for creating named sections. Plugins such as costanza-thorax allow for doing this in an automated fashion. (Don't see a plugin for your framework of choice? [Send over a PR][pull_request]!)
 
 ### Implementation Warning
 
-This code hijacks majors portions of built-in prototype objects. This should fail-safe but is not guaranteed to do so. Use only after considering the risks. User's who would like to avoid prototype extension may pass the `safeMode` option to avoid altering host objects. `safeMode` users will need to manually wrap callback functions to ensure that stack traces are available for methods that are executed on subsequent event loops.
+This code hijacks majors portions of built-in prototype objects. This should be fail-safe but is not guaranteed to do so. Use only after considering the risks. Users who would like to avoid prototype extension may pass the `safeMode` option to avoid altering host objects. `safeMode` users will need to manually wrap callback functions to ensure that stack traces are available for methods that are executed on subsequent event loops.
 
 
 ```javascript
