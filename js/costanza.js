@@ -4,7 +4,7 @@ var _costanzaEvil = function(__costanza_str) {
   return function() {
     return eval(__costanza_str);
   };
-}
+};
 
 this.Costanza = (function() {
   "use strict";
@@ -48,22 +48,16 @@ this.Costanza = (function() {
 
     if (!setTimeout._costanza) {
       _setTimeout = setTimeout;
-      window.setTimeout = function(callback, duration) {
-        if (typeof callback === 'string') {
-          callback = costanzaEvil(callback);
-        }
-
-        var args = Array.prototype.slice.call(arguments);
-        args[0] = bind(callback);
-
-        return _setTimeout.apply(this, args);
-      };
-      setTimeout._costanza = true;
+      window.setTimeout = wrapSet(_setTimeout);
     }
 
     if (!setInterval._costanza) {
       _setInterval = setInterval;
-      window.setInterval = function(callback, interval) {
+      window.setInterval = wrapSet(_setInterval);
+    }
+
+    function wrapSet($super) {
+      function ret(callback, duration) {
         if (typeof callback === 'string') {
           callback = costanzaEvil(callback);
         }
@@ -71,9 +65,10 @@ this.Costanza = (function() {
         var args = Array.prototype.slice.call(arguments);
         args[0] = bind(callback);
 
-        return _setInterval.apply(this, args);
+        return $super.apply(this, args);
       };
-      setInterval._costanza = true;
+      ret._costanza = true;
+      return ret;
     }
 
     if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener._costanza) {
