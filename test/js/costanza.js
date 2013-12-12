@@ -21,6 +21,7 @@ describe('costanza', function() {
   afterEach(function() {
     Costanza.cleanup();
     window.onerror = _onError;
+    window._stringSet = false;
   });
 
   describe('#bind', function() {
@@ -218,6 +219,11 @@ describe('costanza', function() {
       expect(spy).to.not.have.been.called;
     });
 
+    it('should trigger strings successfully', function(done) {
+      window._stringSet = done;
+      setTimeout('window._stringSet();', 10);
+    });
+
     it('should trigger with args successfully', function(done) {
       if (/MSIE/i.test(navigator.userAgent)) {
         return done();
@@ -269,6 +275,13 @@ describe('costanza', function() {
       });
       interval = setInterval(spy, 10);
       expect(spy).to.not.have.been.called;
+    });
+    it('should trigger strings successfully', function(done) {
+      window._stringSet = function() {
+        clearInterval(interval);
+        done();
+      };
+      interval = setInterval('window._stringSet();', 10);
     });
     it('should trigger with args successfully', function(done) {
       if (/MSIE/i.test(navigator.userAgent)) {

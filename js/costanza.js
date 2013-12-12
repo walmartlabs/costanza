@@ -1,6 +1,18 @@
 /*global HTMLDocument, Window, console */
+// Helper method used to avoid exposing costanza internals to the funky string methods
+var _costanzaEvil = function(__costanza_str) {
+  return function() {
+    return eval(__costanza_str);
+  };
+}
+
 this.Costanza = (function() {
   "use strict";
+
+  // Save off a reference to the eval rescoper and remove it from the global scope
+  // to keep things somewhat modular
+  var costanzaEvil = _costanzaEvil;
+  _costanzaEvil = undefined;
 
   function defaultReporter(info, err) {
     /*jshint eqnull:true */
@@ -37,6 +49,10 @@ this.Costanza = (function() {
     if (!setTimeout._costanza) {
       _setTimeout = setTimeout;
       window.setTimeout = function(callback, duration) {
+        if (typeof callback === 'string') {
+          callback = costanzaEvil(callback);
+        }
+
         var args = Array.prototype.slice.call(arguments);
         args[0] = bind(callback);
 
@@ -48,6 +64,10 @@ this.Costanza = (function() {
     if (!setInterval._costanza) {
       _setInterval = setInterval;
       window.setInterval = function(callback, interval) {
+        if (typeof callback === 'string') {
+          callback = costanzaEvil(callback);
+        }
+
         var args = Array.prototype.slice.call(arguments);
         args[0] = bind(callback);
 
@@ -73,7 +93,11 @@ this.Costanza = (function() {
       // if they are not.
       proto._addEventListener = proto.addEventListener;
       proto.addEventListener = function(type, callback, useCapture) {
-        callback._section = callback._section || bind(callback);
+        // TODO : Handle the EventListener interface here
+        if (!callback.handleEvent) {
+          callback._section = callback._section || bind(callback);
+        }
+
         this._addEventListener(type, callback._section, useCapture);
       };
       proto.addEventListener._costanza = true;
