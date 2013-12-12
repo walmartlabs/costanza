@@ -190,16 +190,18 @@ this.Costanza = (function() {
     // This is a real event handler vs. the onerror special case.
     // Since some browsers decide to treat window.onerror as the error event handler,
     // we have to be prepared for either case
-    if (errorMsg && errorMsg.srcElement) {
+    if (errorMsg && (errorMsg.target || errorMsg.srcElement)) {
       // Don't submit duplciate events (and if we weren't already tracking
       // it, it probably wasn't that important)
       if (errorMsg.defaultPrevented || errorMsg._costanzaHandled) {
         return;
       }
 
+      var el = errorMsg.target || errorMsg.srcElement;
+
       errorMsg._costanzaHandled = true;
-      url = url || errorMsg.srcElement.src || errorMsg.srcElement.href;
-      type = errorMsg.srcElement.tagName.toLowerCase();
+      url = url || el.src || el.href;
+      type = el.tagName.toLowerCase();
       errorMsg = 'load-failed';
     }
 
