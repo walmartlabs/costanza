@@ -21,6 +21,7 @@ describe('costanza', function() {
   afterEach(function() {
     Costanza.cleanup();
     window.onerror = _onError;
+    window._stringSet = false;
   });
 
   describe('#bind', function() {
@@ -217,6 +218,25 @@ describe('costanza', function() {
       setTimeout(spy, 10);
       expect(spy).to.not.have.been.called;
     });
+
+    it('should trigger strings successfully', function(done) {
+      window._stringSet = done;
+      setTimeout('window._stringSet();', 10);
+    });
+
+    it('should trigger with args successfully', function(done) {
+      if (/MSIE/i.test(navigator.userAgent)) {
+        return done();
+      }
+
+      var spy = this.spy(function(arg1, arg2) {
+        expect(arg1).to.equal('foo');
+        expect(arg2).to.equal(2);
+        done();
+      });
+      setTimeout(spy, 10, 'foo', 2);
+      expect(spy).to.not.have.been.called;
+    });
     it('should catch errors', function(done) {
       Costanza.init(function(info, err) {
         expect(info.section).to.equal('global');
@@ -254,6 +274,27 @@ describe('costanza', function() {
         done();
       });
       interval = setInterval(spy, 10);
+      expect(spy).to.not.have.been.called;
+    });
+    it('should trigger strings successfully', function(done) {
+      window._stringSet = function() {
+        clearInterval(interval);
+        done();
+      };
+      interval = setInterval('window._stringSet();', 10);
+    });
+    it('should trigger with args successfully', function(done) {
+      if (/MSIE/i.test(navigator.userAgent)) {
+        return done();
+      }
+
+      var spy = this.spy(function(arg1, arg2) {
+        clearInterval(interval);
+        expect(arg1).to.equal('foo');
+        expect(arg2).to.equal(2);
+        done();
+      });
+      interval = setInterval(spy, 10, 'foo', 2);
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
@@ -304,6 +345,30 @@ describe('costanza', function() {
       click(el);
 
       expect(spy).to.have.been.calledOnce;
+      done();
+    });
+
+    it('should execute handleEvent listeners', function(done) {
+      var spy = this.spy();
+      var handler = {
+        handleEvent: spy
+      };
+
+      el = document.createElement('div');
+      el.addEventListener('click', handler);
+
+      document.body.appendChild(el);
+      click(el);
+
+      expect(spy)
+          .to.have.been.calledOnce
+          .to.have.been.calledOn(handler);
+
+      el.removeEventListener('click', handler);
+      click(el);
+
+      expect(spy).to.have.been.calledOnce;
+
       done();
     });
     it('should catch errors', function(done) {

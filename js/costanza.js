@@ -1,6 +1,18 @@
 /*global HTMLDocument, Window, console */
+// Helper method used to avoid exposing costanza internals to the funky string methods
+var _costanzaEvil = function(__costanza_str) {
+  return function() {
+    return eval(__costanza_str);
+  };
+};
+
 this.Costanza = (function() {
   "use strict";
+
+  // Save off a reference to the eval rescoper and remove it from the global scope
+  // to keep things somewhat modular
+  var costanzaEvil = _costanzaEvil;
+  _costanzaEvil = undefined;
 
   function defaultReporter(info, err) {
     /*jshint eqnull:true */
@@ -36,18 +48,27 @@ this.Costanza = (function() {
 
     if (!setTimeout._costanza) {
       _setTimeout = setTimeout;
-      window.setTimeout = function(callback, duration) {
-        return _setTimeout(bind(callback), duration);
-      };
-      setTimeout._costanza = true;
+      window.setTimeout = wrapSet(_setTimeout);
     }
 
     if (!setInterval._costanza) {
       _setInterval = setInterval;
-      window.setInterval = function(callback, interval) {
-        return _setInterval(bind(callback), interval);
+      window.setInterval = wrapSet(_setInterval);
+    }
+
+    function wrapSet($super) {
+      function ret(callback, duration) {
+        if (typeof callback === 'string') {
+          callback = costanzaEvil(callback);
+        }
+
+        var args = Array.prototype.slice.call(arguments);
+        args[0] = bind(callback);
+
+        return $super.apply(this, args);
       };
-      setInterval._costanza = true;
+      ret._costanza = true;
+      return ret;
     }
 
     if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener._costanza) {
@@ -67,7 +88,18 @@ this.Costanza = (function() {
       // if they are not.
       proto._addEventListener = proto.addEventListener;
       proto.addEventListener = function(type, callback, useCapture) {
-        callback._section = callback._section || bind(callback);
+        if (!callback._section) {
+          if (callback.handleEvent) {
+            callback._section = {
+              handleEvent: function(event) {
+                return callback.handleEvent(event);
+              }
+            };
+          } else {
+            callback._section = bind(callback);
+          }
+        }
+
         this._addEventListener(type, callback._section, useCapture);
       };
       proto.addEventListener._costanza = true;
@@ -160,16 +192,18 @@ this.Costanza = (function() {
     // This is a real event handler vs. the onerror special case.
     // Since some browsers decide to treat window.onerror as the error event handler,
     // we have to be prepared for either case
-    if (errorMsg && errorMsg.srcElement) {
+    if (errorMsg && (errorMsg.target || errorMsg.srcElement)) {
       // Don't submit duplciate events (and if we weren't already tracking
       // it, it probably wasn't that important)
       if (errorMsg.defaultPrevented || errorMsg._costanzaHandled) {
         return;
       }
 
+      var el = errorMsg.target || errorMsg.srcElement;
+
       errorMsg._costanzaHandled = true;
-      url = url || errorMsg.srcElement.src || errorMsg.srcElement.href;
-      type = errorMsg.srcElement.tagName.toLowerCase();
+      url = url || el.src || el.href;
+      type = el.tagName.toLowerCase();
       errorMsg = 'load-failed';
     }
 
