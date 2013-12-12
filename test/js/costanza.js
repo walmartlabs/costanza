@@ -347,6 +347,30 @@ describe('costanza', function() {
       expect(spy).to.have.been.calledOnce;
       done();
     });
+
+    it('should execute handleEvent listeners', function(done) {
+      var spy = this.spy();
+      var handler = {
+        handleEvent: spy
+      };
+
+      el = document.createElement('div');
+      el.addEventListener('click', handler);
+
+      document.body.appendChild(el);
+      click(el);
+
+      expect(spy)
+          .to.have.been.calledOnce
+          .to.have.been.calledOn(handler);
+
+      el.removeEventListener('click', handler);
+      click(el);
+
+      expect(spy).to.have.been.calledOnce;
+
+      done();
+    });
     it('should catch errors', function(done) {
       var error = new Error('It failed');
 

@@ -93,9 +93,16 @@ this.Costanza = (function() {
       // if they are not.
       proto._addEventListener = proto.addEventListener;
       proto.addEventListener = function(type, callback, useCapture) {
-        // TODO : Handle the EventListener interface here
-        if (!callback.handleEvent) {
-          callback._section = callback._section || bind(callback);
+        if (!callback._section) {
+          if (callback.handleEvent) {
+            callback._section = {
+              handleEvent: function(event) {
+                return callback.handleEvent(event);
+              }
+            };
+          } else {
+            callback._section = bind(callback);
+          }
         }
 
         this._addEventListener(type, callback._section, useCapture);
