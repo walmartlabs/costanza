@@ -1,4 +1,10 @@
 /*global Costanza, Event */
+
+// NOTE: Many of these tests are async form when they appear to be sync. This is because many of the
+// tests will not properly emit failures outside of timeout errors due to the error handling logic
+// that is under test. If test timeouts are seen then it's likely that one of the expectations
+// failed. The first step in this case should be logging the expectations to see if any threw.
+
 describe('costanza', function() {
   var error = new Error('Failure is always an option'),
       spy,
