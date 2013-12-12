@@ -202,7 +202,7 @@ this.Costanza = (function() {
 
       errorMsg._costanzaHandled = true;
       url = url || el.src || el.href;
-      type = el.tagName.toLowerCase();
+      type = el.nodeName.toLowerCase();
       errorMsg = 'load-failed';
     }
 
