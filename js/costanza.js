@@ -37,7 +37,10 @@ this.Costanza = (function() {
     if (!setTimeout._costanza) {
       _setTimeout = setTimeout;
       window.setTimeout = function(callback, duration) {
-        return _setTimeout(bind(callback), duration);
+        var args = Array.prototype.slice.call(arguments);
+        args[0] = bind(callback);
+
+        return _setTimeout.apply(this, args);
       };
       setTimeout._costanza = true;
     }
@@ -45,7 +48,10 @@ this.Costanza = (function() {
     if (!setInterval._costanza) {
       _setInterval = setInterval;
       window.setInterval = function(callback, interval) {
-        return _setInterval(bind(callback), interval);
+        var args = Array.prototype.slice.call(arguments);
+        args[0] = bind(callback);
+
+        return _setInterval.apply(this, args);
       };
       setInterval._costanza = true;
     }

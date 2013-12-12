@@ -217,6 +217,20 @@ describe('costanza', function() {
       setTimeout(spy, 10);
       expect(spy).to.not.have.been.called;
     });
+
+    it('should trigger with args successfully', function(done) {
+      if (/MSIE/i.test(navigator.userAgent)) {
+        return done();
+      }
+
+      var spy = this.spy(function(arg1, arg2) {
+        expect(arg1).to.equal('foo');
+        expect(arg2).to.equal(2);
+        done();
+      });
+      setTimeout(spy, 10, 'foo', 2);
+      expect(spy).to.not.have.been.called;
+    });
     it('should catch errors', function(done) {
       Costanza.init(function(info, err) {
         expect(info.section).to.equal('global');
@@ -254,6 +268,20 @@ describe('costanza', function() {
         done();
       });
       interval = setInterval(spy, 10);
+      expect(spy).to.not.have.been.called;
+    });
+    it('should trigger with args successfully', function(done) {
+      if (/MSIE/i.test(navigator.userAgent)) {
+        return done();
+      }
+
+      var spy = this.spy(function(arg1, arg2) {
+        clearInterval(interval);
+        expect(arg1).to.equal('foo');
+        expect(arg2).to.equal(2);
+        done();
+      });
+      interval = setInterval(spy, 10, 'foo', 2);
       expect(spy).to.not.have.been.called;
     });
     it('should catch errors', function(done) {
