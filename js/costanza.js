@@ -66,7 +66,7 @@ this.Costanza = (function() {
         args[0] = bind(callback);
 
         return $super.apply(this, args);
-      };
+      }
       ret._costanza = true;
       return ret;
     }
@@ -141,10 +141,21 @@ this.Costanza = (function() {
     }
   }
 
-  function bind(name, callback) {
-    if (!callback) {
-      callback = name;
-      name = currentSection;
+  function bind(/* [name, ][info, ] callback */) {
+    var callback = arguments[2] || arguments[1] || arguments[0],
+        info,
+        name = currentSection;
+
+    if (arguments.length > 2) {
+      info = arguments[1];
+      name = arguments[0];
+    }
+    if (arguments.length > 1) {
+      name = arguments[0];
+      if (typeof name !== 'string') {
+        info = name;
+        name = currentSection;
+      }
     }
 
     if (callback._costanza) {
@@ -159,12 +170,23 @@ this.Costanza = (function() {
 
         return callback.apply(this, arguments);
       } catch (err) {
-        reportCallback({
+        var reportInfo = {
           type: 'javascript',
           section: currentSection,
           msg: err.message,
           stack: err.stack
-        }, err);
+        };
+
+        // Inline debug data
+        if (info) {
+          for (var keyName in info) {
+            if (info.hasOwnProperty(keyName)) {
+              reportInfo[keyName] = info[keyName];
+            }
+          }
+        }
+
+        reportCallback(reportInfo, err);
       } finally {
         currentSection = priorSite;
       }
@@ -237,8 +259,8 @@ this.Costanza = (function() {
       reportCallback(info, error);
     },
     bind: bind,
-    run: function(name, callback) {
-      bind(name, callback)();
+    run: function(name, info, callback) {
+      bind(name, info, callback)();
     },
     onError: onError
   };

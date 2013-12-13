@@ -53,6 +53,47 @@ describe('costanza', function() {
         error);
       done();
     });
+    it('report errors', function(done) {
+      Costanza.run('fail!', function() {
+        throw error;
+      });
+      expect(spy).to.have.been.calledWith({
+          type: 'javascript',
+          section: 'fail!',
+          msg: 'Failure is always an option',
+          stack: error.stack
+        },
+        error);
+      done();
+    });
+    it('report info', function(done) {
+      Costanza.run({foo: true}, function() {
+        throw error;
+      });
+      expect(spy).to.have.been.calledWith({
+          type: 'javascript',
+          section: 'global',
+          foo: true,
+          msg: 'Failure is always an option',
+          stack: error.stack
+        },
+        error);
+      done();
+    });
+    it('report errors and info', function(done) {
+      Costanza.run('fail!', {foo: true}, function() {
+        throw error;
+      });
+      expect(spy).to.have.been.calledWith({
+          type: 'javascript',
+          section: 'fail!',
+          foo: true,
+          msg: 'Failure is always an option',
+          stack: error.stack
+        },
+        error);
+      done();
+    });
     it('should restore the site', function(done) {
       var section1 = Costanza.bind('success', function() {
         expect(Costanza.current()).to.equal('success');

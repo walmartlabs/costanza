@@ -109,13 +109,15 @@ Initializes the library. In the event of an error `callback(info, rawError)` wil
 
 - `rawError`: The raw error object that generated the event, if available. This is not guaranteed to be JSON safe.
 
-### #run(name, callback)
+### #run(name, [info, ] callback)
 
 Creates a new named section and executes immediately. This allows for easy creation of new section scopes.
 
-### #bind([name, ] callback)
+### #bind([name, ]\[info, ] callback)
 
 Creates a section which may be executed at a later time. If `name` is omitted then the section will execute under the current section name. This is useful for providing callbacks to methods that do not use one of the automaticly bound paths.
+
+If an `info` object is provided, the data passed on error will be extended with any values defined on `info`. This may be used for passing arbitrary debugging data back to the tracking system.
 
 ### #current()
 
