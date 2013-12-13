@@ -95,7 +95,7 @@ Costanza.run('still-yet-another-unique-name', function() {
 
 ## API
 
-### #init(callback)
+### #init(callback, options)
 
 Initializes the library. In the event of an error `callback(info, rawError)` will be receive:
 
@@ -108,6 +108,12 @@ Initializes the library. In the event of an error `callback(info, rawError)` wil
   - `stack`: The javascript stack trace of the error, if available.
 
 - `rawError`: The raw error object that generated the event, if available. This is not guaranteed to be JSON safe.
+
+
+Enabled features may be controlled with the `options` parameter. These include:
+
+- `safeMode`: Disables native overrides
+- `noGlobal`: Disables global `onerror` and `error` event tracking
 
 ### #run(name, [info, ] callback)
 
