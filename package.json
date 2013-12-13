@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "bower": "~1.1.2",
-    "phoenix-build": "~2.3",
+    "phoenix-build": "~2.5",
     "jake": "*"
   },
   "scripts": {
