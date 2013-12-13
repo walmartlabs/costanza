@@ -32,9 +32,10 @@ this.Costanza = (function() {
       _setInterval;
 
   function init(_reportCallback, options) {
+    options = options || {};
     reportCallback = _reportCallback || defaultReporter;
 
-    if (!window.onerror || !window.onerror._costanza) {
+    if (!options.noGlobal && (!window.onerror || !window.onerror._costanza)) {
       _onError = _onError || window.onerror;
       window.onerror = onErrorRoot;
 
@@ -42,7 +43,7 @@ this.Costanza = (function() {
     }
 
     // Allow users to opt out of the native prototype augmentation.
-    if (options && options.safeMode) {
+    if (options.safeMode) {
       return;
     }
 
