@@ -259,7 +259,7 @@ this.Costanza = (function() {
     },
     bind: bind,
     run: function(name, info, callback) {
-      bind(name, info, callback)();
+      return bind(name, info, callback)();
     },
     onError: onError
   };
