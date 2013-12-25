@@ -7,8 +7,6 @@ var _costanzaEvil = function(__costanza_str) {
 };
 
 this.Costanza = (function() {
-  "use strict";
-
   // Save off a reference to the eval rescoper and remove it from the global scope
   // to keep things somewhat modular
   var costanzaEvil = _costanzaEvil;
