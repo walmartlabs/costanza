@@ -157,7 +157,12 @@ this.Costanza = (function() {
       }
     }
 
-    if (callback._costanza) {
+    if (!callback || !callback.apply) {
+      // If we don't have a valid function, log it and pass whatever it is on
+      reportError(new Error('Costanza:Unexpected bind: ' + callback));
+
+      return callback;
+    } else if (callback._costanza) {
       return callback;
     }
 
@@ -169,29 +174,33 @@ this.Costanza = (function() {
 
         return callback.apply(this, arguments);
       } catch (err) {
-        var reportInfo = {
-          type: 'javascript',
-          section: currentSection,
-          msg: err.message,
-          stack: err.stack
-        };
-
-        // Inline debug data
-        if (info) {
-          for (var keyName in info) {
-            if (info.hasOwnProperty(keyName)) {
-              reportInfo[keyName] = info[keyName];
-            }
-          }
-        }
-
-        reportCallback(reportInfo, err);
+        reportError(err);
       } finally {
         currentSection = priorSite;
       }
     };
     ret._costanza = true;
     return ret;
+
+    function reportError(err) {
+      var reportInfo = {
+        type: 'javascript',
+        section: currentSection,
+        msg: err.message,
+        stack: err.stack
+      };
+
+      // Inline debug data
+      if (info) {
+        for (var keyName in info) {
+          if (info.hasOwnProperty(keyName)) {
+            reportInfo[keyName] = info[keyName];
+          }
+        }
+      }
+
+      reportCallback(reportInfo, err);
+    }
   }
 
   function onError(errorMsg, url, lineNumber, error) {
