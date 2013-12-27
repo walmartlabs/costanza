@@ -1,4 +1,6 @@
 # Costanza
+[![Build Status](https://travis-ci.org/walmartlabs/costanza.png?branch=master)](https://travis-ci.org/walmartlabs/costanza)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/walmartlabs/costanza/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Frontend error tracking toolkit: Own your own domain
 
@@ -197,7 +199,4 @@ George Costanza (of Seinfeld fame) was the [master of his domain](http://en.wiki
 [android_onerror]: https://code.google.com/p/android/issues/detail?id=15680
 [yaypie]: https://twitter.com/yaypie
 [error_support]: http://pieisgood.org/test/script-link-events/
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/walmartlabs/costanza/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
