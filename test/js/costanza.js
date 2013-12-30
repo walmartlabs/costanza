@@ -256,6 +256,25 @@ describe('costanza', function() {
         video.src = '/invalid.js';
         document.getElementById('qunit-fixture').appendChild(video);
       });
+
+      it('should ignore handle image load errors during unload', function(done) {
+        if ($.browser.firefox) {
+          return done();
+        }
+
+        Costanza.pageUnloading = true;
+        Costanza.init(function(info, err) {
+          throw new Error('error seen');
+        });
+
+        var img = document.createElement('img');
+        img.src = '/not-found.png';
+        document.getElementById('qunit-fixture').appendChild(img);
+        setTimeout(function() {
+          Costanza.pageUnloading = false;
+          done();
+        }, 1500);
+      });
     });
   });
 

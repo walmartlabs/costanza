@@ -233,7 +233,9 @@ this.Costanza = (function() {
     if (errorMsg && el) {
       // Don't submit duplciate events (and if we weren't already tracking
       // it, it probably wasn't that important)
-      if (errorMsg.defaultPrevented || errorMsg._costanzaHandled) {
+      // Additionally ignore load errors that might happen after page unload has started.
+      if (errorMsg.defaultPrevented || errorMsg._costanzaHandled
+          || Costanza.pageUnloading) {
         return;
       }
 
