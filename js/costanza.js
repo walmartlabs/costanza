@@ -257,7 +257,8 @@ this.Costanza = (function() {
   }
   onErrorRoot._costanza = true;
 
-  return {
+
+  var Costanza = {
     init: init,
     cleanup: cleanup,
     current: function() {
@@ -272,4 +273,5 @@ this.Costanza = (function() {
     },
     onError: onError
   };
+  return Costanza;
 })();
