@@ -33,6 +33,7 @@ Showing that the error occurred in the `click .js-big-red-button` event handler 
 - Automatically associating callbacks and events with the code group that created them
 - Tracking global javascript errors
 - Tracking resource load failures
+- Page unload tracking
 
 ## Usage
 

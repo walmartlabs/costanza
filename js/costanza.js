@@ -38,6 +38,13 @@ this.Costanza = (function() {
       window.onerror = onErrorRoot;
 
       window.addEventListener('error', onError, true);
+
+      if ('onpagehide' in window) {
+        window.addEventListener('pageshow', onPageShow, false);
+        window.addEventListener('pagehide', onPageHide, false);
+      } else {
+        window.addEventListener('beforeunload', onPageHide, false);
+      }
     }
 
     // Allow users to opt out of the native prototype augmentation.
@@ -257,6 +264,12 @@ this.Costanza = (function() {
   }
   onErrorRoot._costanza = true;
 
+  function onPageShow(event) {
+    Costanza.pageUnloading = false;
+  }
+  function onPageHide(event) {
+    Costanza.pageUnloading = true;
+  }
 
   var Costanza = {
     init: init,
