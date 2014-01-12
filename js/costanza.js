@@ -198,13 +198,17 @@ this.Costanza = (function() {
       };
 
       // Inline debug data
-      if (info) {
-        for (var keyName in info) {
-          if (info.hasOwnProperty(keyName)) {
-            reportInfo[keyName] = info[keyName];
+      function extend(info) {
+        if (info) {
+          for (var keyName in info) {
+            if (info.hasOwnProperty(keyName)) {
+              reportInfo[keyName] = info[keyName];
+            }
           }
         }
       }
+      extend(info);
+      extend(err.info);
 
       reportCallback(reportInfo, err);
     }
