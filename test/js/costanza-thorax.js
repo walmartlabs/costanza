@@ -23,12 +23,16 @@ describe('costanza-thorax', function() {
     view.trigger('thorax');
     expect(spy).to.have.been.calledWith({
         type: 'javascript',
-        section: 'thorax-exception: test ;; view-event:thorax',
+        section: 'thorax-event',
         msg: 'It failed!',
-        stack: error.stack
+        stack: error.stack,
+
+        view: 'test',
+        eventName: 'view-event:thorax'
       },
       error);
   });
+
   it('should tie to onException', function() {
     Thorax.onException('here!', error);
     expect(spy).to.have.been.calledWith({
