@@ -33,7 +33,7 @@ this.Costanza = (function() {
     options = options || {};
     reportCallback = _reportCallback || defaultReporter;
 
-    if (!options.noGlobal && (!window.onerror || !window.onerror._costanza)) {
+    if (!options.noGlobal && window.addEventListener && (!window.onerror || !window.onerror._costanza)) {
       _onError = _onError || window.onerror;
       window.onerror = onErrorRoot;
 
@@ -52,12 +52,12 @@ this.Costanza = (function() {
       return;
     }
 
-    if (!setTimeout._costanza) {
+    if (window.setTimeout && !setTimeout._costanza) {
       _setTimeout = setTimeout;
       window.setTimeout = wrapSet(_setTimeout);
     }
 
-    if (!setInterval._costanza) {
+    if (window.setInterval && !setInterval._costanza) {
       _setInterval = setInterval;
       window.setInterval = wrapSet(_setInterval);
     }
@@ -124,10 +124,10 @@ this.Costanza = (function() {
     }
 
     reportCallback = defaultReporter;
-    if (setTimeout._costanza) {
+    if (_setTimeout && setTimeout._costanza) {
       window.setTimeout = _setTimeout;
     }
-    if (setInterval._costanza) {
+    if (_setInterval && setInterval._costanza) {
       window.setInterval = _setInterval;
     }
     if (window.Element && Element.prototype.addEventListener && Element.prototype.addEventListener._costanza) {
