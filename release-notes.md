@@ -2,7 +2,16 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.1.0...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.0...master)
+
+## v1.2.0 - January 12th, 2014
+- [#7](https://github.com/walmartlabs/costanza/pull/7) - Update thorax plugin for runSection/bindSection ([@kpdecker](https://api.github.com/users/kpdecker))
+- [#8](https://github.com/walmartlabs/costanza/issues/8) - Track page loading state
+- Define new sections for addEventListener - 3d43080
+- Augment errors with `err.info` if available. - 18cf491
+- Feature detect addEventListner and setTimeout - 322b560
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.1.0...v1.2.0)
 
 ## v1.1.0 - December 30th, 2013
 - Ignore resource load errors when unloading - e54c710
