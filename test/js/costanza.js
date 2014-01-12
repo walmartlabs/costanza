@@ -448,23 +448,34 @@ describe('costanza', function() {
 
       expect(spy)
           .to.have.been.calledOnce
-          .to.have.been.calledWith(sinon.match({section: 'global'}), error);
+          .to.have.been.calledWith(sinon.match({section: 'event-div:click'}), error);
       done();
     });
-    it('should include current catch tag', function(done) {
+    it('should define section from id', function(done) {
       var error = new Error('It failed');
 
       el = document.createElement('div');
-      Costanza.run('tracked!', function() {
-        el.addEventListener('click', function() { throw error; });
-      });
+      el.id = 'id!';
+      el.className = 'foo bar';
+      el.addEventListener('click', function() { throw error; });
 
       document.body.appendChild(el);
       click(el);
 
-      expect(spy)
-          .to.have.been.calledOnce
-          .to.have.been.calledWith(sinon.match({section: 'tracked!'}), error);
+      expect(spy).to.have.been.calledWith(sinon.match({section: 'event-div#id!:click'}), error);
+      done();
+    });
+    it('should define section from classname', function(done) {
+      var error = new Error('It failed');
+
+      el = document.createElement('div');
+      el.className = 'foo bar';
+      el.addEventListener('click', function() { throw error; });
+
+      document.body.appendChild(el);
+      click(el);
+
+      expect(spy).to.have.been.calledWith(sinon.match({section: 'event-div.foo.bar:click'}), error);
       done();
     });
     it('should remove event listeners', function(done) {
@@ -496,7 +507,7 @@ describe('costanza', function() {
 
         expect(spy)
             .to.have.been.calledOnce
-            .to.have.been.calledWith(sinon.match({section: 'caught!'}), error);
+            .to.have.been.calledWith(sinon.match({section: 'event-window:click'}), error);
         expect(handler).to.have.been.calledOnce;
 
         window.removeEventListener('click', handler);
@@ -520,7 +531,7 @@ describe('costanza', function() {
 
         expect(spy)
             .to.have.been.calledOnce
-            .to.have.been.calledWith(sinon.match({section: 'caught!'}), error);
+            .to.have.been.calledWith(sinon.match({section: 'event-#document:click'}), error);
         expect(handler).to.have.been.calledOnce;
 
         document.removeEventListener('click', handler, true);

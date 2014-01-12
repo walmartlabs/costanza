@@ -95,14 +95,19 @@ this.Costanza = (function() {
       proto._addEventListener = proto.addEventListener;
       proto.addEventListener = function(type, callback, useCapture) {
         if (!callback._section) {
+          var className = this.className ? '.' + this.className.replace(' ', '.') : '',
+              elementId = (this.nodeName || 'window').toLowerCase()
+                + (this.id ? '#' + this.id : className),
+              sectionName = 'event-' + elementId + ':' + type;
+
           if (callback.handleEvent) {
             callback._section = {
-              handleEvent: function(event) {
+              handleEvent: bind(sectionName, function(event) {
                 return callback.handleEvent(event);
-              }
+              })
             };
           } else {
-            callback._section = bind(callback);
+            callback._section = bind(sectionName, callback);
           }
         }
 
