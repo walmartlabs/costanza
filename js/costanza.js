@@ -234,6 +234,11 @@ this.Costanza = (function() {
       // Ignore untrackable external errors locally
       return;
     }
+    if (!url && lineNumber === 0) {
+      // If the external script error message MIGHT have some more meaning then provide a more
+      // meaningful url than undefined.
+      url = 'Unknown External Script';
+    }
 
     // This is a real event handler vs. the onerror special case.
     // Since some browsers decide to treat window.onerror as the error event handler,
