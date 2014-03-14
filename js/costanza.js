@@ -95,16 +95,16 @@ this.Costanza = (function() {
       proto._addEventListener = proto.addEventListener;
       proto.addEventListener = function(type, callback, useCapture) {
         if (!callback._section) {
-	        var className = '';
-	        if (this.className) {
-		        // baseValue for SVGAnimatedString on svg elements
-		        className = this.className.baseVal || this.className;
-		        className = '.' + className.replace(' ', '.');
-	        }
+          var className = '';
+          if (this.className) {
+            // baseValue for SVGAnimatedString on svg elements
+            className = this.className.baseVal || this.className;
+            className = '.' + className.replace(' ', '.');
+          }
 
-	        var elementId = (this.nodeName || 'window').toLowerCase()
-			        + (this.id ? '#' + this.id : className),
-		        sectionName = 'event-' + elementId + ':' + type;
+          var elementId = (this.nodeName || 'window').toLowerCase()
+              + (this.id ? '#' + this.id : className),
+            sectionName = 'event-' + elementId + ':' + type;
 
           if (callback.handleEvent) {
             callback._section = {
