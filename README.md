@@ -26,7 +26,7 @@ TypeError: 'undefined' is not an object
     at ret (http://localhost/base.js:1:9860)
 ```
 
-Showing that the error occurred in the `click .js-big-red-button` event handler of the throax `home` view as well as providing the stack trace associated with that event.
+Showing that the error occurred in the `click .js-big-red-button` event handler of the Thorax `home` view as well as providing the stack trace associated with that event.
 
 ## Features
 
