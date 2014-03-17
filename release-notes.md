@@ -2,7 +2,13 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.0...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.1...master)
+
+## v1.2.1 - March 17th, 2014
+- [#13](https://github.com/walmartlabs/costanza/pull/13) - Fix for Event Handlers on SVG Elements with a class. ([@DatenMetzgerX](https://api.github.com/users/DatenMetzgerX))
+- Provide clearer url message for blocked scripts - 6c275c6
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.0...v1.2.1)
 
 ## v1.2.0 - January 12th, 2014
 - [#7](https://github.com/walmartlabs/costanza/pull/7) - Update thorax plugin for runSection/bindSection ([@kpdecker](https://api.github.com/users/kpdecker))
