@@ -69,7 +69,10 @@ this.Costanza = (function() {
         }
 
         var args = Array.prototype.slice.call(arguments);
-        args[0] = bind(callback);
+        args[0] = bind({
+          captureErrors: true,     // No need to propagate to global error handler
+          callback: callback
+        });
 
         return $super.apply(this, args);
       }
@@ -113,7 +116,11 @@ this.Costanza = (function() {
               })
             };
           } else {
-            callback._section = bind(sectionName, callback);
+            callback._section = bind({
+              name: sectionName,
+              captureErrors: true,   // No need to propagate to global error handler
+              callback: callback
+            });
           }
         }
 
@@ -160,18 +167,29 @@ this.Costanza = (function() {
 
   function bind(/* [name, ][info, ] callback */) {
     var callback = arguments[2] || arguments[1] || arguments[0],
+        captureErrors,
         info,
         name = currentSection;
 
-    if (arguments.length > 2) {
-      info = arguments[1];
-      name = arguments[0];
-    }
-    if (arguments.length > 1) {
-      name = arguments[0];
-      if (typeof name !== 'string') {
-        info = name;
-        name = currentSection;
+    if (!callback.apply) {
+      // Options object was passed
+      name = callback.name || name;
+      info = callback.info;
+      captureErrors = callback.captureErrors;
+
+      callback = callback.callback;
+    } else {
+      // Array-based arguments
+      if (arguments.length > 2) {
+        info = arguments[1];
+        name = arguments[0];
+      }
+      if (arguments.length > 1) {
+        name = arguments[0];
+        if (typeof name !== 'string') {
+          info = name;
+          name = currentSection;
+        }
       }
     }
 
@@ -193,6 +211,17 @@ this.Costanza = (function() {
         return callback.apply(this, arguments);
       } catch (err) {
         reportError(err);
+
+        // Continute propagation of the error so we aren't left in an intedeterminate
+        // state
+        if (!captureErrors) {
+          // Rewrite the error so we know that its already gone through the error handling
+          // stack
+          var toThrow = new Error('Costanza: ' + err.stack);
+          toThrow.stack = err.stack || toThrow.stack;
+          toThrow._costanza = true;
+          throw toThrow;
+        }
       } finally {
         currentSection = priorSite;
       }
@@ -201,6 +230,12 @@ this.Costanza = (function() {
     return ret;
 
     function reportError(err) {
+      // Do not over report
+      if (err._costanza) {
+        return;
+      }
+      err._costanza = true;
+
       var reportInfo = {
         type: 'javascript',
         section: currentSection,
