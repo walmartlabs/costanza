@@ -6,12 +6,13 @@
 // failed. The first step in this case should be logging the expectations to see if any threw.
 
 describe('costanza', function() {
-  var error = new Error('Failure is always an option'),
+  var error,
       spy,
       errorSpy,
       _onError = window.onerror;
   beforeEach(function() {
     spy = this.spy();
+    error = new Error('Failure is always an option');
 
     // Have to disable the default error handling to prevent failures in tests that are expecting
     // them
@@ -41,22 +42,12 @@ describe('costanza', function() {
       done();
     });
     it('report errors', function(done) {
-      Costanza.run('fail!', function() {
-        throw error;
-      });
-      expect(spy).to.have.been.calledWith({
-          type: 'javascript',
-          section: 'fail!',
-          msg: 'Failure is always an option',
-          stack: error.stack
-        },
-        error);
-      done();
-    });
-    it('report errors', function(done) {
-      Costanza.run('fail!', function() {
-        throw error;
-      });
+      expect(function() {
+        Costanza.run('fail!', function() {
+          throw error;
+        });
+      }).to.throw(/Costanza: /);
+
       expect(spy).to.have.been.calledWith({
           type: 'javascript',
           section: 'fail!',
@@ -67,9 +58,12 @@ describe('costanza', function() {
       done();
     });
     it('report info', function(done) {
-      Costanza.run({foo: true}, function() {
-        throw error;
-      });
+      expect(function() {
+        Costanza.run({foo: true}, function() {
+          throw error;
+        });
+      }).to.throw(/Costanza: /);
+
       expect(spy).to.have.been.calledWith({
           type: 'javascript',
           section: 'global',
@@ -81,9 +75,12 @@ describe('costanza', function() {
       done();
     });
     it('report errors and info', function(done) {
-      Costanza.run('fail!', {foo: true}, function() {
-        throw error;
-      });
+      expect(function() {
+        Costanza.run('fail!', {foo: true}, function() {
+          throw error;
+        });
+      }).to.throw(/Costanza: /);
+
       expect(spy).to.have.been.calledWith({
           type: 'javascript',
           section: 'fail!',
@@ -108,13 +105,33 @@ describe('costanza', function() {
         expect(Costanza.current()).to.equal('fail!');
         throw error;
       });
-      section1();
+      expect(section1).to.throw(/Costanza: /);
+
       expect(spy).to.have.been.calledWith({
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
           stack: error.stack
         }, error);
+      done();
+    });
+
+    it('captureErrors with flag', function(done) {
+      Costanza.run({
+        name: 'fail!',
+        captureErrors: true,
+        callback: function() {
+          throw error;
+        }
+      });
+
+      expect(spy).to.have.been.calledWith({
+          type: 'javascript',
+          section: 'fail!',
+          msg: 'Failure is always an option',
+          stack: error.stack
+        },
+        error);
       done();
     });
   });

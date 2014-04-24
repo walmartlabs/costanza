@@ -20,7 +20,10 @@ describe('costanza-thorax', function() {
       }
     }))();
 
-    view.trigger('thorax');
+    expect(function() {
+      view.trigger('thorax');
+    }).to.throw(/Costanza: /);
+
     expect(spy).to.have.been.calledWith({
         type: 'javascript',
         section: 'thorax-event',
