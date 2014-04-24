@@ -2,7 +2,16 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.1...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.2...master)
+
+## v1.2.2 - April 23rd, 2014
+- [#14](https://github.com/walmartlabs/costanza/pull/14) - Fix flow control on errors ([@kpdecker](https://api.github.com/users/kpdecker))
+- Update README.md - 79c1afe
+
+Compatibility notes:
+- Thrown errors will be propagated up to the caller to prevent changes to execution flow.
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.1...v1.2.2)
 
 ## v1.2.1 - March 17th, 2014
 - [#13](https://github.com/walmartlabs/costanza/pull/13) - Fix for Event Handlers on SVG Elements with a class. ([@DatenMetzgerX](https://api.github.com/users/DatenMetzgerX))
