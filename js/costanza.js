@@ -271,9 +271,13 @@ this.Costanza = (function() {
       errorMsg = errorMsg.message;
     }
 
-    if (errorMsg === 'Script error.' && !url) {
+    var isCostanzaError = /\bCostanza: /.test(errorMsg);
+    if ((errorMsg === 'Script error.' && !url)
+        || isCostanzaError) {
       // Ignore untrackable external errors locally
-      return;
+      // Also ignore errors that have already been reported (The _costanza flag does not
+      // propagate to window.onerror
+      return isCostanzaError;
     }
     if (!url && lineNumber === 0) {
       // If the external script error message MIGHT have some more meaning then provide a more
@@ -317,7 +321,7 @@ this.Costanza = (function() {
 
   function onErrorRoot(errorMsg, url, lineNumber, error) {
     _onError && _onError(errorMsg, url, lineNumber, error);
-    onError(errorMsg, url, lineNumber, error);
+    return onError(errorMsg, url, lineNumber, error);
   }
   onErrorRoot._costanza = true;
 
