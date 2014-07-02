@@ -2,7 +2,12 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.2...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.3...master)
+
+## v1.2.3 - July 2nd, 2014
+- [#15](https://github.com/walmartlabs/costanza/pull/15) - Do not report previously handled global errors ([@kpdecker](https://api.github.com/users/kpdecker))
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.2...v1.2.3)
 
 ## v1.2.2 - April 23rd, 2014
 - [#14](https://github.com/walmartlabs/costanza/pull/14) - Fix flow control on errors ([@kpdecker](https://api.github.com/users/kpdecker))
