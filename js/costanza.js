@@ -240,7 +240,7 @@ this.Costanza = (function() {
         type: 'javascript',
         section: currentSection,
         msg: err.message,
-        stack: err.stack
+        stack: (err.stack || err) + ''
       };
 
       // Inline debug data
