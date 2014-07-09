@@ -217,7 +217,7 @@ this.Costanza = (function() {
         if (!captureErrors) {
           // Rewrite the error so we know that its already gone through the error handling
           // stack
-          var toThrow = new Error('Costanza: ' + err.stack);
+          var toThrow = new Error('Costanza: ' + (err && (err.stack || err)));
           toThrow.stack = err.stack || toThrow.stack;
           toThrow._costanza = true;
           throw toThrow;
