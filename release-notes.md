@@ -2,7 +2,13 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.3...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.4...master)
+
+## v1.2.4 - July 9th, 2014
+- Additional stack error failover - 1ae223e
+- Add failover for Costanza stack lookup - 80e113c
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.3...v1.2.4)
 
 ## v1.2.3 - July 2nd, 2014
 - [#15](https://github.com/walmartlabs/costanza/pull/15) - Do not report previously handled global errors ([@kpdecker](https://api.github.com/users/kpdecker))
