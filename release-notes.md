@@ -2,7 +2,12 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.4...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.5...master)
+
+## v1.2.5 - July 10th, 2014
+- Reuse thrown errors when marking for global filter - dde0a0f
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.4...v1.2.5)
 
 ## v1.2.4 - July 9th, 2014
 - Additional stack error failover - 1ae223e
