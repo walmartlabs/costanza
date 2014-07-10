@@ -217,10 +217,23 @@ this.Costanza = (function() {
         if (!captureErrors) {
           // Rewrite the error so we know that its already gone through the error handling
           // stack
-          var toThrow = new Error('Costanza: ' + (err && (err.stack || err)));
-          toThrow.stack = err.stack || toThrow.stack;
-          toThrow._costanza = true;
-          throw toThrow;
+          if (!err.stack) {
+            // Unexpected data. Log and hope that this is surfaced somewhere that it's usable.
+            if (window.console) {
+              console.error('Unknown throw:', err);
+            }
+
+            var toThrow = new Error('Costanza: ' + err);
+            toThrow._costanza = true;
+            throw toThrow;
+          } else {
+            // We don't want to throw a different type or otherwise loose the data that we have
+            // attached to this error message. Instead do the "safest" thing and insert our
+            // logging message so we can detect this in the global error handler.
+            err.message = 'Costanza: ' + err.message;
+            err._costanza = true;
+            throw err;
+          }
         }
       } finally {
         currentSection = priorSite;

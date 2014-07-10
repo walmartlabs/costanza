@@ -41,7 +41,7 @@ describe('costanza-thorax', function() {
     expect(spy).to.have.been.calledWith({
         type: 'javascript',
         section: 'here!',
-        msg: 'It failed!',
+        msg: 'Costanza: It failed!',
         stack: error.stack
       },
       error);
