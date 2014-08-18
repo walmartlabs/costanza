@@ -1,17 +1,5 @@
 /*global HTMLDocument, Window, console */
-// Helper method used to avoid exposing costanza internals to the funky string methods
-var _costanzaEvil = function(__costanza_str) {
-  return function() {
-    return eval(__costanza_str);
-  };
-};
-
 this.Costanza = (function() {
-  // Save off a reference to the eval rescoper and remove it from the global scope
-  // to keep things somewhat modular
-  var costanzaEvil = _costanzaEvil;
-  _costanzaEvil = undefined;
-
   function defaultReporter(info, err) {
     /*jshint eqnull:true */
     console.error('Costanza error:'
@@ -63,9 +51,14 @@ this.Costanza = (function() {
     }
 
     function wrapSet($super) {
-      function ret(callback, duration) {
-        if (typeof callback === 'string') {
-          callback = costanzaEvil(callback);
+      function ret(_callback, duration) {
+        var callback = _callback;
+        if (typeof _callback === 'string') {
+          callback = function() {
+            // Force global exec
+            // http://perfectionkills.com/global-eval-what-are-the-options
+            (1,window.eval)(_callback);
+          };
         }
 
         var args = Array.prototype.slice.call(arguments);

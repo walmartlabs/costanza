@@ -303,8 +303,11 @@ describe('costanza', function() {
     });
 
     it('should trigger strings successfully', function(done) {
-      window._stringSet = done;
-      setTimeout('window._stringSet();', 10);
+      window._stringSet = function(callback) {
+        expect(callback).to.equal('undefined');
+        done();
+      };
+      setTimeout('window._stringSet(typeof callback);', 10);
     });
 
     it('should trigger with args successfully', function(done) {
