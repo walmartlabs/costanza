@@ -9,7 +9,7 @@
     },
     "costanza-thorax": {
       "scripts": [
-        "js/costanza-thorax.js"
+        "thorax.js"
       ]
     }
   },
