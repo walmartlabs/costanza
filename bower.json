@@ -6,6 +6,8 @@
     "node_modules",
     "/components",
     "bower_components",
+    "Jakefile",
+    "package.json",
     "test",
     "tests"
   ],
