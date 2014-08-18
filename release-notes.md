@@ -2,7 +2,13 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.5...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.3.0...master)
+
+## v1.3.0 - August 18th, 2014
+- [#9](https://github.com/walmartlabs/costanza/issues/9) - Investigate global eval hacks ([@kpdecker](https://api.github.com/users/kpdecker))
+- Convert Costanza modules to UMD - f50d256
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.2.5...v1.3.0)
 
 ## v1.2.5 - July 10th, 2014
 - Reuse thrown errors when marking for global filter - dde0a0f
