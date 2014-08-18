@@ -1,5 +1,13 @@
-/*global HTMLDocument, Window, console */
-this.Costanza = (function() {
+/*global HTMLDocument, Window, console, define */
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof require === 'function') {
+    module.exports = factory();
+  } else {
+    root.Costanza = factory();
+  }
+}(this, function() {
   function defaultReporter(info, err) {
     /*jshint eqnull:true */
     console.error('Costanza error:'
@@ -354,4 +362,4 @@ this.Costanza = (function() {
     onError: onError
   };
   return Costanza;
-})();
+}));
