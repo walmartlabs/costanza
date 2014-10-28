@@ -18,6 +18,7 @@
     "lumbar-loader": "~1.2.5",
     "thorax": "git://github.com/walmartlabs/thorax.git#2.x.x",
     "underscore": "~1.5.2",
+    "expect": "~0.3.1",
     "zepto": "~1.0.0"
   }
 }

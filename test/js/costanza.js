@@ -35,10 +35,10 @@ describe('costanza', function() {
     it('should run callback', function(done) {
       var callback = this.spy();
       Costanza.run(callback);
-      expect(callback).to.have.been.calledOnce;
+      expect(callback.callCount).to.equal(1);
 
       Costanza.run('foo', callback);
-      expect(callback).to.have.been.calledTwice;
+      expect(callback.callCount).to.equal(2);
       done();
     });
     it('report errors', function(done) {
@@ -46,15 +46,15 @@ describe('costanza', function() {
         Costanza.run('fail!', function() {
           throw error;
         });
-      }).to.throw(/Costanza: /);
+      }).to.throwError(/Costanza: /);
 
-      expect(spy).to.have.been.calledWith({
+      expect(spy.calledWith({
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
           stack: error.stack
         },
-        error);
+        error)).to.be(true);
       done();
     });
     it('report info', function(done) {
@@ -62,16 +62,16 @@ describe('costanza', function() {
         Costanza.run({foo: true}, function() {
           throw error;
         });
-      }).to.throw(/Costanza: /);
+      }).to.throwError(/Costanza: /);
 
-      expect(spy).to.have.been.calledWith({
+      expect(spy.calledWith({
           type: 'javascript',
           section: 'global',
           foo: true,
           msg: 'Failure is always an option',
           stack: error.stack
         },
-        error);
+        error)).to.be(true);
       done();
     });
     it('report errors and info', function(done) {
@@ -79,16 +79,16 @@ describe('costanza', function() {
         Costanza.run('fail!', {foo: true}, function() {
           throw error;
         });
-      }).to.throw(/Costanza: /);
+      }).to.throwError(/Costanza: /);
 
-      expect(spy).to.have.been.calledWith({
+      expect(spy.calledWith({
           type: 'javascript',
           section: 'fail!',
           foo: true,
           msg: 'Failure is always an option',
           stack: error.stack
         },
-        error);
+        error)).to.be(true);
       done();
     });
     it('should restore the site', function(done) {
@@ -105,14 +105,14 @@ describe('costanza', function() {
         expect(Costanza.current()).to.equal('fail!');
         throw error;
       });
-      expect(section1).to.throw(/Costanza: /);
+      expect(section1).to.throwError(/Costanza: /);
 
-      expect(spy).to.have.been.calledWith({
+      expect(spy.calledWith({
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
           stack: error.stack
-        }, error);
+        }, error)).to.be(true);
       done();
     });
 
@@ -125,13 +125,13 @@ describe('costanza', function() {
         }
       });
 
-      expect(spy).to.have.been.calledWith({
+      expect(spy.calledWith({
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
           stack: error.stack
         },
-        error);
+        error)).to.be(true);
       done();
     });
   });
@@ -139,17 +139,17 @@ describe('costanza', function() {
   describe('#onerror', function() {
     it('should handle error strings', function(done) {
       Costanza.onError('foo', 'bar', 1);
-      expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined});
+      expect(spy.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined})).to.be(true);
       done();
     });
     it('should handle error objects', function(done) {
       Costanza.onError('foo', 'bar', 1, {foo: true});
-      expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined}, {foo: true});
+      expect(spy.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined}, {foo: true})).to.be(true);
       done();
     });
     it('should handle ErrorEvents', function(done) {
       Costanza.onError({message: 'foo', lineno: 1, filename: 'bar'});
-      expect(spy).to.have.been.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined});
+      expect(spy.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined})).to.be(true);
       done();
     });
 
@@ -299,7 +299,7 @@ describe('costanza', function() {
     it('should trigger successfully', function(done) {
       var spy = this.spy(done);
       setTimeout(spy, 10);
-      expect(spy).to.not.have.been.called;
+      expect(spy.callCount).to.equal(0);
     });
 
     it('should trigger strings successfully', function(done) {
@@ -321,7 +321,7 @@ describe('costanza', function() {
         done();
       });
       setTimeout(spy, 10, 'foo', 2);
-      expect(spy).to.not.have.been.called;
+      expect(spy.callCount).to.equal(0);
     });
     it('should catch errors', function(done) {
       Costanza.init(function(info, err) {
@@ -360,7 +360,7 @@ describe('costanza', function() {
         done();
       });
       interval = setInterval(spy, 10);
-      expect(spy).to.not.have.been.called;
+      expect(spy.callCount).to.equal(0);
     });
     it('should trigger strings successfully', function(done) {
       window._stringSet = function() {
@@ -381,7 +381,7 @@ describe('costanza', function() {
         done();
       });
       interval = setInterval(spy, 10, 'foo', 2);
-      expect(spy).to.not.have.been.called;
+      expect(spy.callCount).to.equal(0);
     });
     it('should catch errors', function(done) {
       Costanza.init(function(info, err) {
@@ -430,7 +430,7 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy).to.have.been.calledOnce;
+      expect(spy.callCount).to.equal(1);
       done();
     });
 
@@ -446,14 +446,13 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy)
-          .to.have.been.calledOnce
-          .to.have.been.calledOn(handler);
+      expect(spy.callCount).to.equal(1);
+      expect(spy.calledOn(handler)).to.be(true);
 
       el.removeEventListener('click', handler);
       click(el);
 
-      expect(spy).to.have.been.calledOnce;
+      expect(spy.callCount).to.equal(1);
 
       done();
     });
@@ -466,9 +465,8 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy)
-          .to.have.been.calledOnce
-          .to.have.been.calledWith(sinon.match({section: 'event-div:click'}), error);
+      expect(spy.callCount).to.equal(1);
+      expect(spy.calledWith(sinon.match({section: 'event-div:click'}), error)).to.be(true);
       done();
     });
     it('should define section from id', function(done) {
@@ -482,7 +480,7 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy).to.have.been.calledWith(sinon.match({section: 'event-div#id!:click'}), error);
+      expect(spy.calledWith(sinon.match({section: 'event-div#id!:click'}), error)).to.be(true);
       done();
     });
     it('should define section from classname', function(done) {
@@ -495,7 +493,7 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy).to.have.been.calledWith(sinon.match({section: 'event-div.foo.bar:click'}), error);
+      expect(spy.calledWith(sinon.match({section: 'event-div.foo.bar:click'}), error)).to.be(true);
       done();
     });
     it('should remove event listeners', function(done) {
@@ -508,7 +506,7 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy).to.not.have.been.called;
+      expect(spy.callCount).to.equal(0);
       done();
     });
 
@@ -525,16 +523,15 @@ describe('costanza', function() {
 
         click(window);
 
-        expect(spy)
-            .to.have.been.calledOnce
-            .to.have.been.calledWith(sinon.match({section: 'event-window:click'}), error);
-        expect(handler).to.have.been.calledOnce;
+        expect(spy.callCount).to.equal(1);
+        expect(spy.calledWith(sinon.match({section: 'event-window:click'}), error)).to.be(true);
+        expect(handler.callCount).to.equal(1);
 
         window.removeEventListener('click', handler);
 
         click(window);
-        expect(spy).to.have.been.calledOnce;
-        expect(handler).to.have.been.calledOnce;
+        expect(spy.callCount).to.equal(1);
+        expect(handler.callCount).to.equal(1);
         done();
       });
     });
@@ -549,16 +546,15 @@ describe('costanza', function() {
         document.body.appendChild(el);
         click(el);
 
-        expect(spy)
-            .to.have.been.calledOnce
-            .to.have.been.calledWith(sinon.match({section: 'event-#document:click'}), error);
-        expect(handler).to.have.been.calledOnce;
+        expect(spy.callCount).to.equal(1);
+        expect(spy.calledWith(sinon.match({section: 'event-#document:click'}), error)).to.be(true);
+        expect(handler.callCount).to.equal(1);
 
         document.removeEventListener('click', handler, true);
 
         click(el);
-        expect(spy).to.have.been.calledOnce;
-        expect(handler).to.have.been.calledOnce;
+        expect(spy.callCount).to.equal(1);
+        expect(handler.callCount).to.equal(1);
         done();
       });
     });
