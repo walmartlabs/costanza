@@ -22,9 +22,9 @@ describe('costanza-thorax', function() {
 
     expect(function() {
       view.trigger('thorax');
-    }).to.throw(/Costanza: /);
+    }).to.throwError(/Costanza: /);
 
-    expect(spy).to.have.been.calledWith({
+    expect(spy.calledWith({
         type: 'javascript',
         section: 'thorax-event',
         msg: 'It failed!',
@@ -33,17 +33,17 @@ describe('costanza-thorax', function() {
         view: 'test',
         eventName: 'view-event:thorax'
       },
-      error);
+      error)).to.be(true);
   });
 
   it('should tie to onException', function() {
     Thorax.onException('here!', error);
-    expect(spy).to.have.been.calledWith({
+    expect(spy.calledWith({
         type: 'javascript',
         section: 'here!',
         msg: 'Costanza: It failed!',
         stack: error.stack
       },
-      error);
+      error)).to.be(true);
   });
 });

@@ -20,13 +20,21 @@
         "lumbar-loader"
       ],
       "scripts": [
+        "test/polyfill.js",
         "test/load.js"
       ]
     },
     "test": {
       "topLevelName": "Test",
       "mixins": [
-        {"name": "test", "library": "phoenix-build"},
+        {
+        "name": "test",
+        "library": "phoenix-build",
+        "overrides": {
+          "test/lib/chai.js": "test_components/expect/index.js",
+          "test/lib/sinon-chai.js": false
+        }
+        },
         "test-runner"
       ],
       "static": [
