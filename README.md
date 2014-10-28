@@ -1,6 +1,5 @@
 # Costanza
 [![Build Status](https://travis-ci.org/walmartlabs/costanza.png?branch=master)](https://travis-ci.org/walmartlabs/costanza)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/walmartlabs/costanza/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Frontend error tracking toolkit: Own your own domain
 
