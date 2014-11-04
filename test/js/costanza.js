@@ -1,4 +1,35 @@
-/*global Costanza, Event */
+/*global Costanza, Event, jQuery */
+
+//    Originally taken from Zepto.js - http://git.io/iKLCrw
+//    Modified to work with jQuery
+
+;(function($){
+  function detect(ua){
+    var os = this.os = {}, browser = this.browser = {},
+      webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/),
+      android = ua.match(/(Android);?[\s\/]+([\d.]+)?/),
+      ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+      ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/),
+      iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
+      blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/),
+      bb10 = ua.match(/(BB10).*Version\/([\d.]+)/),
+      chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
+      firefox = ua.match(/Firefox\/([\d.]+)/),
+      ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/);
+
+    if (browser.webkit = !!webkit) browser.version = webkit[1]
+    if (android) os.android = true, os.version = android[2]
+
+    os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || blackberry || bb10 ||
+      (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) ||
+      (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))))
+  }
+
+  detect.call($, navigator.userAgent);
+  // make available to unit tests
+  $.__detect = detect;
+
+})(jQuery);
 
 // NOTE: Many of these tests are async form when they appear to be sync. This is because many of the
 // tests will not properly emit failures outside of timeout errors due to the error handling logic
