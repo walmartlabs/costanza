@@ -51,16 +51,6 @@ module.exports = function(config) {
       browserName: 'iPhone',
       version: '4.3'
     },
-    sl_iPhone_5: {
-      base: 'SauceLabs',
-      browserName: 'iPhone',
-      version: '5.1'
-    },
-    sl_iPhone_6: {
-      base: 'SauceLabs',
-      browserName: 'iPhone',
-      version: '6.1'
-    },
     sl_iPhone_7: {
       base: 'SauceLabs',
       browserName: 'iPhone',
