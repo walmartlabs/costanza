@@ -1,0 +1,25 @@
+{
+  "frameworks": ["mocha"],
+  "singleRun": true,
+  "colors": true,
+  "reporters": ["dots"],
+  "preprocessors": {
+    "setup.html": ["html2js"]
+  },
+  "files": [
+    "setup.html",
+    "setup.js",
+    "../test_components/expect/index.js",
+    "../test_components/jquery/jquery.min.js",
+    "../test_components/handlebars/handlebars.js",
+    "../test_components/underscore/underscore.js",
+    "../test_components/backbone/backbone.js",
+    "thorax.js",
+    "sinon.js",
+    "../js/costanza.js",
+    "js/costanza.js",
+    "thorax.js",
+    {"pattern": "invalid.js", "included": false}
+  ],
+  "browsers": ["PhantomJS"]
+}
