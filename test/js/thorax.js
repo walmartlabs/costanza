@@ -3,7 +3,7 @@ describe('costanza-thorax', function() {
   var error = new Error('It failed!'),
       spy;
   beforeEach(function() {
-    spy = this.spy();
+    spy = sinon.spy();
     Costanza.init(spy);
   });
   afterEach(function() {
