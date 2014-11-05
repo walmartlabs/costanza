@@ -4,7 +4,7 @@
       "topLevelName": "Phoenix",
 
       "mixins": [
-        "thorax-dep-zepto",
+        "thorax-dep-jquery",
         "thorax",
         "costanza",
         "costanza-thorax"

@@ -21,6 +21,7 @@
 
   var reportCallback = defaultReporter,
       currentSection = 'global',
+      _listeners = [],
       _onError,
       _setTimeout,
       _setInterval;
@@ -93,10 +94,21 @@
       }
     }
 
+    function addCleanupListener(proto, listenerName, listener) {
+      proto[listenerName]._costanza = true;
+
+      _listeners.push(function() {
+        proto[listenerName] = listener;
+      });
+    }
+
     function wrapListener(proto) {
       // We must pair the native implementation with the proper proto object as ios7 will throw
       // if they are not.
-      proto._addEventListener = proto.addEventListener;
+      var _addEventListener,
+          _removeEventListener;
+
+      _addEventListener = proto.addEventListener;
       proto.addEventListener = function(type, callback, useCapture) {
         if (!callback._section) {
           var className = '';
@@ -125,21 +137,23 @@
           }
         }
 
-        this._addEventListener(type, callback._section, useCapture);
-      };
-      proto.addEventListener._costanza = true;
 
-      proto._removeEventListener = proto.removeEventListener;
-      proto.removeEventListener = function(type, callback, useCapture) {
-        this._removeEventListener(type, callback._section || callback, useCapture);
+        _addEventListener.call(this, type, callback._section, useCapture);
       };
-      proto.removeEventListener._costanza = true;
+
+      addCleanupListener(proto, 'addEventListener', _addEventListener);
+
+      _removeEventListener = proto.removeEventListener;
+      proto.removeEventListener = function(type, callback, useCapture) {
+        _removeEventListener.call(this, type, callback._section || callback, useCapture);
+      };
+
+      addCleanupListener(proto, 'removeEventListener', _removeEventListener);
     }
   }
   function cleanup() {
-    function cleanupListener(proto) {
-      proto.addEventListener = proto._addEventListener;
-      proto.removeEventListener = proto._removeEventListener;
+    while (_listeners.length) {
+      _listeners.pop()();
     }
 
     reportCallback = defaultReporter;
