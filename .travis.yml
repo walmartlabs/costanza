@@ -9,7 +9,6 @@ before_install:
 
 before_script:
   - "./node_modules/.bin/bower install"
-  - "./node_modules/.bin/jake"
 
 script:
-  - "./node_modules/.bin/jake test-runner"
+  - "./node_modules/.bin/gulp test sauce"

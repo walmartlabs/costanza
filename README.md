@@ -183,12 +183,14 @@ The following are exceptions seen in the wild that appear to be thrown by 3rd pa
 
 Command line:
 
-    jake test
+    gulp
 
 Interactive:
 
-    jake watch
-    $browser http://machine.name:8080/test.html
+    gulp watch
+
+Costanza uses [@karma][karma], and will automatically load all locally installed browsers. If you want to access it manually or remotely, you can do so via
+`http://localhost:9876`
 
 ## Why is this called Costanza?
 
@@ -199,4 +201,4 @@ George Costanza (of Seinfeld fame) was the [master of his domain](http://en.wiki
 [android_onerror]: https://code.google.com/p/android/issues/detail?id=15680
 [yaypie]: https://twitter.com/yaypie
 [error_support]: http://pieisgood.org/test/script-link-events/
-
+[karma]: http://karma-runner.github.io/

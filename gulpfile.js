@@ -8,6 +8,12 @@ gulp.task('test', function(done) {
   }, done);
 });
 
+gulp.task('watch', function(done) {
+  karma.start({
+    configFile: __dirname + '/test/karma.watch.js'
+  }, done);
+});
+
 gulp.task('test-local', function(done) {
   karma.start({
     configFile: __dirname + '/test/karma.conf.js'
