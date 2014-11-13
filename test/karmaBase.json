@@ -18,6 +18,7 @@
     "sinon.js",
     "../js/costanza.js",
     "js/costanza.js",
+    "../thorax.js",
     "js/thorax.js",
     {"pattern": "invalid.js", "included": false}
   ],
