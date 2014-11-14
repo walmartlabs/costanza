@@ -1,0 +1,24 @@
+{
+  "frameworks": ["mocha"],
+  "singleRun": true,
+  "colors": true,
+  "reporters": ["dots"],
+  "files": [
+    "../test_components/expect/index.js",
+    "../test_components/jquery/jquery.min.js",
+    "../test_components/handlebars/handlebars.js",
+    "../test_components/underscore/underscore.js",
+    "../test_components/backbone/backbone.js",
+
+    "lib/thorax.js",
+    "lib/sinon.js",
+
+    "../js/costanza.js",
+    "../thorax.js",
+
+    "tests/costanza.js",
+    "tests/thorax.js",
+    {"pattern": "fixtures/invalid.js", "included": false}
+  ],
+  "browsers": ["PhantomJS"]
+}

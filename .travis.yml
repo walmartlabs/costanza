@@ -1,15 +1,17 @@
 language: node_js
 node_js:
-  - "0.10"
-
+- '0.10'
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - "phantomjs --version"
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- phantomjs --version
 before_script:
-  - "./node_modules/.bin/bower install"
-  - "./node_modules/.bin/jake"
+- "./node_modules/.bin/bower install"
 
 script:
-  - "./node_modules/.bin/jake test-runner"
+- "./node_modules/.bin/gulp test sauce"
+
+env:
+  global:
+  - secure: aAKZvFFl9w04dn8IGcBGtbOF/VuXqCx+x4yIa08NsIUUiC4/34HgeAp1c91K2sJKCh6Y7/Sf+7a2AqqQK/B0qKCJo5iLHiKBeM31Un1o22UfmWTyrBvHEqgoMA6Uz62y4qU7wB5Ol/Osnl1wfiWzKSlAhoK5INZXPGGRRb93TQ8=
+  - secure: rZpT2cyhUtvAdlFmKk6RhyayAp5mLgX9GMk+Hx++Uv9M8lH0ClqubqfQCNIa5mMDUq2CsIZymmdzdkiX25FGw5LzJMn/aRyCx7Em93LVOlDA1NptK16rpIsPQzLJT6XppoAsmpcbyzBi0fp4gefeDuh1+SDFAjRNv3yqbqfPRjo=

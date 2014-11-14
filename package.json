@@ -2,12 +2,18 @@
   "name": "costanza",
   "version": "1.3.0",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "bower": "^1.3.0",
-    "phoenix-build": "4.x",
-    "jake": "*"
+    "gulp": "^3.8.10",
+    "karma": "^0.12.24",
+    "karma-mocha": "^0.1.9",
+    "karma-detect-browsers": "^0.1.2",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-sauce-launcher": "^0.2.10",
+    "mocha": "^2.0.1",
+    "sinon": "1.5.2"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jake test"
+    "test": "./node_modules/.bin/gulp"
   }
 }

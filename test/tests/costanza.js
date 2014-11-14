@@ -15,14 +15,20 @@
       bb10 = ua.match(/(BB10).*Version\/([\d.]+)/),
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
       firefox = ua.match(/Firefox\/([\d.]+)/),
+      opera = ua.match(/Opera/),
       ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/);
+      safari = ua.match(/Version\/([\d.]+)([^S](Safari)|[^M]*(Mobile)[^S]*(Safari))/);
 
-    if (browser.webkit = !!webkit) browser.version = webkit[1]
-    if (android) os.android = true, os.version = android[2]
+    if (browser.webkit = !!webkit) browser.version = webkit[1];
+    if (android) os.android = true, os.version = android[2];
+    if (opera) browser.opera = true;
+    if (ua.match(/PhantomJS/)) browser.phantom = true;
+    if (safari) browser.safari = true;
+
 
     os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || blackberry || bb10 ||
       (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) ||
-      (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))))
+      (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))));
   }
 
   detect.call($, navigator.userAgent);
@@ -41,13 +47,14 @@ describe('costanza', function() {
       spy,
       errorSpy,
       _onError = window.onerror;
+
   beforeEach(function() {
-    spy = this.spy();
+    spy = sinon.spy();
     error = new Error('Failure is always an option');
 
     // Have to disable the default error handling to prevent failures in tests that are expecting
     // them
-    window.onerror = errorSpy = this.spy();
+    window.onerror = errorSpy = sinon.spy();
 
     // Disable the sandbox if any as we want to actually hit the native impl
     if (this.clock) {
@@ -56,6 +63,7 @@ describe('costanza', function() {
 
     Costanza.init(spy);
   });
+
   afterEach(function() {
     Costanza.cleanup();
     window.onerror = _onError;
@@ -64,7 +72,7 @@ describe('costanza', function() {
 
   describe('#bind', function() {
     it('should run callback', function(done) {
-      var callback = this.spy();
+      var callback = sinon.spy();
       Costanza.run(callback);
       expect(callback.callCount).to.equal(1);
 
@@ -199,11 +207,10 @@ describe('costanza', function() {
 
         var img = document.createElement('img');
         img.src = '/not-found.png';
-        document.getElementById('qunit-fixture').appendChild(img);
+        document.body.appendChild(img);
       });
       it('should handle script load errors', function(done) {
-        if ($.browser.firefox
-            || window.mochaPhantomJS) {
+        if ($.browser.firefox) {
           return done();
         }
 
@@ -220,12 +227,11 @@ describe('costanza', function() {
 
         var script = document.createElement('script');
         script.src = '/not-found.js';
-        document.getElementById('qunit-fixture').appendChild(script);
+        document.body.appendChild(script);
       });
       it('should handle script parse errors', function(done) {
         if (($.os.android && parseFloat($.os.version) < 3)
-            || /Opera\//.test(navigator.userAgent)
-            || window.mochaPhantomJS) {
+            || $.browser.opera || $.browser.phantom) {
           // window.onerror is not supported by android 2.3
           // https://code.google.com/p/android/issues/detail?id=15680
           // Opera doesn't seem to trigger this for syntax errors specifically
@@ -241,8 +247,8 @@ describe('costanza', function() {
         });
 
         var script = document.createElement('script');
-        script.src = '/invalid.js';
-        document.getElementById('qunit-fixture').appendChild(script);
+        script.src = '/base/fixtures/invalid.js';
+        document.body.appendChild(script);
       });
 
       it('should handle link load errors', function(done) {
@@ -264,13 +270,14 @@ describe('costanza', function() {
         link.rel = 'stylesheet';
         link.type = 'text/css';
         link.href = '/not-found.css';
-        document.getElementById('qunit-fixture').appendChild(link);
+        document.body.appendChild(link);
       });
 
       it('should handle video not found errors', function(done) {
-        if ($.os.phone || $.browser.firefox || $.os.android) {
+        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom || $.browser.safari) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
+          // Safari doesn't throws resource errors for missing video or audio srcs
           return done();
         }
 
@@ -283,11 +290,11 @@ describe('costanza', function() {
 
         var video = document.createElement('video');
         video.src = '/not-found.mpg';
-        document.getElementById('qunit-fixture').appendChild(video);
+        document.body.appendChild(video);
       });
 
       it('should handle video load errors', function(done) {
-        if ($.os.phone || $.browser.firefox || $.os.android) {
+        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
           return done();
@@ -302,7 +309,7 @@ describe('costanza', function() {
 
         var video = document.createElement('video');
         video.src = '/invalid.js';
-        document.getElementById('qunit-fixture').appendChild(video);
+        document.body.appendChild(video);
       });
 
       it('should ignore handle image load errors during unload', function(done) {
@@ -317,7 +324,7 @@ describe('costanza', function() {
 
         var img = document.createElement('img');
         img.src = '/not-found.png';
-        document.getElementById('qunit-fixture').appendChild(img);
+        document.body.appendChild(img);
         setTimeout(function() {
           Costanza.pageUnloading = false;
           done();
@@ -328,7 +335,7 @@ describe('costanza', function() {
 
   describe('setTimeout', function() {
     it('should trigger successfully', function(done) {
-      var spy = this.spy(done);
+      var spy = sinon.spy(done);
       setTimeout(spy, 10);
       expect(spy.callCount).to.equal(0);
     });
@@ -346,7 +353,7 @@ describe('costanza', function() {
         return done();
       }
 
-      var spy = this.spy(function(arg1, arg2) {
+      var spy = sinon.spy(function(arg1, arg2) {
         expect(arg1).to.equal('foo');
         expect(arg2).to.equal(2);
         done();
@@ -386,7 +393,7 @@ describe('costanza', function() {
     });
 
     it('should trigger successfully', function(done) {
-      var spy = this.spy(function() {
+      var spy = sinon.spy(function() {
         clearInterval(interval);
         done();
       });
@@ -405,7 +412,7 @@ describe('costanza', function() {
         return done();
       }
 
-      var spy = this.spy(function(arg1, arg2) {
+      var spy = sinon.spy(function(arg1, arg2) {
         clearInterval(interval);
         expect(arg1).to.equal('foo');
         expect(arg2).to.equal(2);
@@ -453,7 +460,7 @@ describe('costanza', function() {
     });
 
     it('should execute event listeners', function(done) {
-      var spy = this.spy();
+      var spy = sinon.spy();
 
       el = document.createElement('div');
       el.addEventListener('click', spy);
@@ -466,7 +473,7 @@ describe('costanza', function() {
     });
 
     it('should execute handleEvent listeners', function(done) {
-      var spy = this.spy();
+      var spy = sinon.spy();
       var handler = {
         handleEvent: spy
       };
@@ -528,7 +535,7 @@ describe('costanza', function() {
       done();
     });
     it('should remove event listeners', function(done) {
-      var spy = this.spy();
+      var spy = sinon.spy();
 
       el = document.createElement('div');
       el.addEventListener('click', spy);
@@ -547,7 +554,7 @@ describe('costanza', function() {
       }
 
       var error = new Error('It failed: window'),
-          handler = this.spy(function() { throw error; });
+          handler = sinon.spy(function() { throw error; });
 
       Costanza.run('caught!', function() {
         window.addEventListener('click', handler);
@@ -568,7 +575,7 @@ describe('costanza', function() {
     });
     it('should handle events on the document object', function(done) {
       var error = new Error('It failed: doc'),
-          handler = this.spy(function() { throw error; });
+          handler = sinon.spy(function() { throw error; });
 
       Costanza.run('caught!', function() {
         document.addEventListener('click', handler, true);
