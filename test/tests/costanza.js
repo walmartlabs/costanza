@@ -207,7 +207,7 @@ describe('costanza', function() {
 
         var img = document.createElement('img');
         img.src = '/not-found.png';
-        document.getElementById('qunit-fixture').appendChild(img);
+        document.body.appendChild(img);
       });
       it('should handle script load errors', function(done) {
         if ($.browser.firefox) {
@@ -227,7 +227,7 @@ describe('costanza', function() {
 
         var script = document.createElement('script');
         script.src = '/not-found.js';
-        document.getElementById('qunit-fixture').appendChild(script);
+        document.body.appendChild(script);
       });
       it('should handle script parse errors', function(done) {
         if (($.os.android && parseFloat($.os.version) < 3)
@@ -247,8 +247,8 @@ describe('costanza', function() {
         });
 
         var script = document.createElement('script');
-        script.src = '/base/invalid.js';
-        document.getElementById('qunit-fixture').appendChild(script);
+        script.src = '/base/fixtures/invalid.js';
+        document.body.appendChild(script);
       });
 
       it('should handle link load errors', function(done) {
@@ -270,7 +270,7 @@ describe('costanza', function() {
         link.rel = 'stylesheet';
         link.type = 'text/css';
         link.href = '/not-found.css';
-        document.getElementById('qunit-fixture').appendChild(link);
+        document.body.appendChild(link);
       });
 
       it('should handle video not found errors', function(done) {
@@ -290,7 +290,7 @@ describe('costanza', function() {
 
         var video = document.createElement('video');
         video.src = '/not-found.mpg';
-        document.getElementById('qunit-fixture').appendChild(video);
+        document.body.appendChild(video);
       });
 
       it('should handle video load errors', function(done) {
@@ -309,7 +309,7 @@ describe('costanza', function() {
 
         var video = document.createElement('video');
         video.src = '/invalid.js';
-        document.getElementById('qunit-fixture').appendChild(video);
+        document.body.appendChild(video);
       });
 
       it('should ignore handle image load errors during unload', function(done) {
@@ -324,7 +324,7 @@ describe('costanza', function() {
 
         var img = document.createElement('img');
         img.src = '/not-found.png';
-        document.getElementById('qunit-fixture').appendChild(img);
+        document.body.appendChild(img);
         setTimeout(function() {
           Costanza.pageUnloading = false;
           done();

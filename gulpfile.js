@@ -4,25 +4,25 @@ var gulp = require('gulp'),
 
 gulp.task('test', function(done) {
   karma.start({
-    configFile: __dirname + '/test/karma.phantom.js'
+    configFile: __dirname + '/test/karma-phantom.js'
   }, done);
 });
 
 gulp.task('watch', function(done) {
   karma.start({
-    configFile: __dirname + '/test/karma.watch.js'
+    configFile: __dirname + '/test/karma-watch.js'
   }, done);
 });
 
 gulp.task('test-local', function(done) {
   karma.start({
-    configFile: __dirname + '/test/karma.conf.js'
+    configFile: __dirname + '/test/karma-all-local.js'
   }, done);
 });
 
 gulp.task('sauce', function(done) {
   karma.start({
-    configFile: __dirname + '/test/karma.conf-ci.js'
+    configFile: __dirname + '/test/karma-sauce.js'
   }, done);
 });
 
