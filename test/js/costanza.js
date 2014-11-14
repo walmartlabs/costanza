@@ -17,11 +17,14 @@
       firefox = ua.match(/Firefox\/([\d.]+)/),
       opera = ua.match(/Opera/),
       ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/);
+      safari = ua.match(/Version\/([\d.]+)([^S](Safari)|[^M]*(Mobile)[^S]*(Safari))/);
 
     if (browser.webkit = !!webkit) browser.version = webkit[1];
     if (android) os.android = true, os.version = android[2];
     if (opera) browser.opera = true;
     if (ua.match(/PhantomJS/)) browser.phantom = true;
+    if (safari) browser.safari = true;
+
 
     os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || blackberry || bb10 ||
       (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) ||
@@ -271,9 +274,10 @@ describe('costanza', function() {
       });
 
       it('should handle video not found errors', function(done) {
-        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom) {
+        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom || $.browser.safari) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
+          // Safari doesn't throws resource errors for missing video or audio srcs
           return done();
         }
 
