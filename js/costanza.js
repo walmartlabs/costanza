@@ -113,7 +113,7 @@
         if (!callback._section) {
           var className = '';
           if (this.className) {
-            // Use baseValue for SVGAnimatedString on svg elements
+            // Use baseVal for SVGAnimatedString on svg elements
             className = typeof this.className.baseVal !== 'undefined' ? this.className.baseVal : this.className;
             className = '.' + className.replace(' ', '.');
           }
