@@ -114,8 +114,10 @@
           var className = '';
           if (this.className) {
             // Use baseVal for SVGAnimatedString on svg elements
-            className = typeof this.className.baseVal !== 'undefined' ? this.className.baseVal : this.className;
-            className = '.' + className.replace(' ', '.');
+            className = this.className.baseVal != null ? this.className.baseVal : this.className;
+            if (className) {
+              className = '.' + className.replace(' ', '.');
+            }
           }
 
           var elementId = (this.nodeName || 'window').toLowerCase()
