@@ -596,6 +596,35 @@ describe('costanza', function() {
         done();
       });
     });
+
+    it('should handle adding a listener to a svg element with a css class', function(done) {
+      var error = new Error('It failed'),
+          handler = sinon.spy(function() { throw error; });
+
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      el.className.baseVal = "big";
+      el.addEventListener('click', handler);
+
+      document.body.appendChild(el);
+      click(el);
+
+      expect(spy.calledWith(sinon.match({section: 'event-svg.big:click'}), error)).to.be(true);
+      done();
+    });
+
+    it('should handle adding a listener to a svg element with no css class', function(done) {
+      var error = new Error('It failed'),
+          handler = sinon.spy(function() { throw error; });
+
+      el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      el.addEventListener('click', handler);
+
+      document.body.appendChild(el);
+      click(el);
+
+      expect(spy.calledWith(sinon.match({section: 'event-svg:click'}), error)).to.be(true);
+      done();
+    });
   });
 
   function click(el) {

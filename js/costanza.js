@@ -113,9 +113,11 @@
         if (!callback._section) {
           var className = '';
           if (this.className) {
-            // baseValue for SVGAnimatedString on svg elements
-            className = this.className.baseVal || this.className;
-            className = '.' + className.replace(' ', '.');
+            // Use baseVal for SVGAnimatedString on svg elements
+            className = this.className.baseVal != null ? this.className.baseVal : this.className;
+            if (className) {
+              className = '.' + className.replace(' ', '.');
+            }
           }
 
           var elementId = (this.nodeName || 'window').toLowerCase()
