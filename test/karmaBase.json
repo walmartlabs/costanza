@@ -1,6 +1,6 @@
 {
   "frameworks": ["mocha"],
-  "singleRun": true,
+  "singleRun": false,
   "colors": true,
   "reporters": ["dots"],
   "files": [

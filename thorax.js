@@ -15,7 +15,7 @@
         type: 'javascript',
         section: name,
         msg: error.message,
-        stack: error.stack
+        stack: error.stack || error + ''
       },
       error);
   };

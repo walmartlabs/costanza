@@ -30,7 +30,7 @@ describe('costanza-thorax', function() {
         type: 'javascript',
         section: 'thorax-event',
         msg: 'It failed!',
-        stack: error.stack,
+        stack: error.stack || error + '',
 
         view: 'test',
         eventName: 'view-event:thorax'
@@ -40,11 +40,12 @@ describe('costanza-thorax', function() {
 
   it('should tie to onException', function() {
     Thorax.onException('here!', error);
+
     expect(spy.calledWith({
         type: 'javascript',
         section: 'here!',
         msg: 'Costanza: It failed!',
-        stack: error.stack
+        stack: error.stack || error + ''
       },
       error)).to.be(true);
   });

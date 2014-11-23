@@ -22,6 +22,8 @@
   var reportCallback = defaultReporter,
       currentSection = 'global',
       _listeners = [],
+      _addEventStr = window.attachEvent ? 'attachEvent' : 'addEventListener',
+      _removeEventStr = window.detachEvent ? 'detachEvent' : 'removeEventListener',
       _onError,
       _setTimeout,
       _setInterval;
@@ -49,14 +51,18 @@
       return;
     }
 
-    if (window.setTimeout && !setTimeout._costanza) {
-      _setTimeout = setTimeout;
-      window.setTimeout = wrapSet(_setTimeout);
-    }
+    // IE <=8 makes it nearly impossible to override setTimeout, so we don't
+    // http://www.adequatelygood.com/Replacing-setTimeout-Globally.html
+    if (!window.attachEvent) {
+      if (window.setTimeout && !setTimeout._costanza) {
+        _setTimeout = setTimeout;
+        window.setTimeout = wrapSet(_setTimeout);
+      }
 
-    if (window.setInterval && !setInterval._costanza) {
-      _setInterval = setInterval;
-      window.setInterval = wrapSet(_setInterval);
+      if (window.setInterval && !setInterval._costanza) {
+        _setInterval = setInterval;
+        window.setInterval = wrapSet(_setInterval);
+      }
     }
 
     function wrapSet($super) {
@@ -82,7 +88,7 @@
       return ret;
     }
 
-    if (window.Element && Element.prototype.addEventListener && !Element.prototype.addEventListener._costanza) {
+    if (window.Element && Element.prototype[_addEventStr] && !Element.prototype[_addEventStr]._costanza) {
 
       wrapListener(Element.prototype);
       if (window.HTMLDocument || window.Document) {
@@ -103,13 +109,16 @@
     }
 
     function wrapListener(proto) {
+      var _addEventStr = proto.attachEvent ? 'attachEvent' : 'addEventListener',
+          _removeEventStr = proto.detachEvent ? 'detachEvent' : 'removeEventListener',
+          _addListener,
+          _removeListener;
+
       // We must pair the native implementation with the proper proto object as ios7 will throw
       // if they are not.
-      var _addEventListener,
-          _removeEventListener;
-
-      _addEventListener = proto.addEventListener;
-      proto.addEventListener = function(type, callback, useCapture) {
+          //
+      _addListener = proto[_addEventStr];
+      proto[_addEventStr] = function(type, callback, useCapture) {
         if (!callback._section) {
           var className = '';
           if (this.className) {
@@ -137,20 +146,20 @@
           }
         }
 
-
-        _addEventListener.call(this, type, callback._section, useCapture);
+        _addListener.call(this, type, callback._section, useCapture);
       };
 
-      addCleanupListener(proto, 'addEventListener', _addEventListener);
+      addCleanupListener(proto, _addEventStr, _addListener);
 
-      _removeEventListener = proto.removeEventListener;
-      proto.removeEventListener = function(type, callback, useCapture) {
-        _removeEventListener.call(this, type, callback._section || callback, useCapture);
+      _removeListener = proto[_removeEventStr];
+      proto[_removeEventStr] = function(type, callback, useCapture) {
+        _removeListener.call(this, type, callback._section || callback, useCapture);
       };
 
-      addCleanupListener(proto, 'removeEventListener', _removeEventListener);
+      addCleanupListener(proto, _removeEventStr, _removeListener);
     }
   }
+
   function cleanup() {
     while (_listeners.length) {
       _listeners.pop()();
@@ -163,20 +172,13 @@
     if (_setInterval && setInterval._costanza) {
       window.setInterval = _setInterval;
     }
-    if (window.Element && Element.prototype.addEventListener && Element.prototype.addEventListener._costanza) {
-      cleanupListener(Element.prototype);
-      if (window.HTMLDocument) {
-        cleanupListener(HTMLDocument.prototype);
-      }
-      if (window.Window) {
-        cleanupListener(Window.prototype);
-      }
-    }
 
     if (window.onerror && window.onerror._costanza) {
       window.onerror = _onError;
 
-      window.removeEventListener('error', onError, true);
+      if (window.removeEventListener) {
+        window.removeEventListener('error', onError, true);
+      }
     }
   }
 

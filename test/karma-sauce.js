@@ -31,6 +31,18 @@ module.exports = function(config) {
       version: '12'
     },
 
+    sl_ie_8: {
+      base: 'SauceLabs',
+      browserName: 'internet explorer',
+      version: '8'
+    },
+
+    sl_ie_9: {
+      base: 'SauceLabs',
+      browserName: 'internet explorer',
+      version: '9'
+    },
+
     sl_ie_10: {
       base: 'SauceLabs',
       browserName: 'internet explorer',
@@ -46,11 +58,6 @@ module.exports = function(config) {
     sl_iPhone_latest: {
       base: 'SauceLabs',
       browserName: 'iPhone'
-    },
-    sl_iPhone_4: {
-      base: 'SauceLabs',
-      browserName: 'iPhone',
-      version: '4.3'
     },
     sl_iPhone_7: {
       base: 'SauceLabs',
