@@ -70,6 +70,7 @@
         var callback = _callback;
         if (typeof _callback === 'string') {
           callback = function() {
+            /*jshint -W061:true */
             // Force global exec
             // http://perfectionkills.com/global-eval-what-are-the-options
             (1,window.eval)(_callback);
