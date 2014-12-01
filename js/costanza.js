@@ -109,9 +109,7 @@
     }
 
     function wrapListener(proto) {
-      var _addEventStr = proto.attachEvent ? 'attachEvent' : 'addEventListener',
-          _removeEventStr = proto.detachEvent ? 'detachEvent' : 'removeEventListener',
-          _addListener,
+      var _addListener,
           _removeListener;
 
       // We must pair the native implementation with the proper proto object as ios7 will throw
