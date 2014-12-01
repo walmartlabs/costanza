@@ -295,13 +295,6 @@ describe('costanza', function() {
           return done();
         }
 
-        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom || $.browser.safari) {
-          // Most phones dump to an external app for video, so ignore for the sake of tests
-          // Firefox generally doesn't support capturing error events
-          // Safari doesn't throws resource errors for missing video or audio srcs
-          return done();
-        }
-
         Costanza.init(function(info, err) {
           expect(info.section).to.equal('global');
           expect(info.type).to.equal('video');
