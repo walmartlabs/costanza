@@ -552,10 +552,11 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
+      var eventMatch = sinon.match({section: 'event-div:click'})
+            .or(sinon.match({section: 'event-div:onclick'}));
+
       expect(spy.callCount).to.equal(1);
-      expect(spy.calledWith(sinon.match({section: 'event-div:click'})
-        .or(sinon.match({section: 'event-div:onclick'})), error))
-        .to.be(true);
+      expect(spy.calledWith(eventMatch, error)).to.be(true);
       done();
     });
 
@@ -575,9 +576,11 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy.calledWith(sinon.match({section: 'event-div#id!:click'})
-        .or(sinon.match({section: 'event-div#id!:onclick'})), error))
-        .to.be(true);
+      var eventMatch = sinon.match({section: 'event-div#id!:click'})
+            .or(sinon.match({section: 'event-div#id!:onclick'}));
+
+      expect(spy.callCount).to.equal(1);
+      expect(spy.calledWith(eventMatch, error)).to.be(true);
       done();
     });
 
@@ -596,9 +599,11 @@ describe('costanza', function() {
       document.body.appendChild(el);
       click(el);
 
-      expect(spy.calledWith(sinon.match({section: 'event-div.foo.bar:click'})
-        .or(sinon.match({section: 'event-div.foo.bar:onclick'})), error))
-        .to.be(true);
+      var eventMatch = sinon.match({section: 'event-div.foo.bar:click'})
+            .or(sinon.match({section: 'event-div.foo.bar:onclick'}));
+
+      expect(spy.callCount).to.equal(1);
+      expect(spy.calledWith(eventMatch, error)).to.be(true);
       done();
     });
 
@@ -664,10 +669,11 @@ describe('costanza', function() {
         document.body.appendChild(el);
         click(el);
 
+        var eventMatch = sinon.match({section: 'event-#document:click'})
+              .or(sinon.match({section: 'event-#document:onclick'}));
+
         expect(spy.callCount).to.equal(1);
-        expect(spy.calledWith(sinon.match({section: 'event-#document:click'})
-          .or(sinon.match({section: 'event-#document:onclick'})), error))
-          .to.be(true);
+        expect(spy.calledWith(eventMatch, error)).to.be(true);
         expect(handler.callCount).to.equal(1);
 
         if (document.removeEventListener) {
