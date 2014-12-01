@@ -696,7 +696,7 @@ describe('costanza', function() {
       el.click();
     } else {
       try {
-        event = new event('click');
+        event = new Event('click');
       } catch (err) {
         if (document.createEvent) {
           var event = document.createEvent('MouseEvents');
