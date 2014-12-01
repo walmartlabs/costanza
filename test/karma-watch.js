@@ -4,10 +4,8 @@ var baseConfig = require('./karmaBase');
 module.exports = function(config) {
   baseConfig.singleRun = false;
   baseConfig.frameworks.unshift('detectBrowsers');
-  baseConfig.logLevel = config.LOG_ERROR;
-  baseConfig.port = 9876;
+  baseConfig.logLevel = config.LOG_INFO;
   delete baseConfig.browsers;
 
-  baseConfig.logLevel = config.LOG_ERROR,
   config.set(baseConfig);
 };

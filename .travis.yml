@@ -6,10 +6,11 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 - phantomjs --version
 before_script:
-- "./node_modules/.bin/bower install"
+- ./node_modules/.bin/bower install
+- export PATH=./node_modules/.bin:$PATH
 
 script:
-- "./node_modules/.bin/gulp test sauce"
+  - "gulp test && gulp sauce-good && gulp sauce-ie && gulp sauce-mobile"
 
 env:
   global:

@@ -29,56 +29,13 @@ module.exports = function(config) {
       base: 'SauceLabs',
       browserName: 'opera',
       version: '12'
-    },
-
-    sl_ie_8: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      version: '8'
-    },
-
-    sl_ie_9: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      version: '9'
-    },
-
-    sl_ie_10: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      version: '10'
-    },
-    sl_ie_11: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      version: '11'
-    },
-
-
-    sl_iPhone_latest: {
-      base: 'SauceLabs',
-      browserName: 'iPhone'
-    },
-    sl_iPhone_7: {
-      base: 'SauceLabs',
-      browserName: 'iPhone',
-      version: '7.1'
-    },
-
-    sl_android_tablet_4: {
-      base: 'SauceLabs',
-      browserName: 'android',
-      version: '4.4'
     }
-
   };
 
   baseConfig.customLaunchers = customLaunchers;
   baseConfig.reporters.push('saucelabs');
   baseConfig.browsers = Object.keys(customLaunchers);
   baseConfig.sauceLabs = { testName: 'Costanza' };
-
-  delete baseConfig.logLevel;
 
   config.set(baseConfig);
 };

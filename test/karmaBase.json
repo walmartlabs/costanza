@@ -1,6 +1,7 @@
 {
   "frameworks": ["mocha"],
-  "singleRun": false,
+  "logLevel": "ERROR",
+  "singleRun": true,
   "colors": true,
   "reporters": ["dots"],
   "files": [
