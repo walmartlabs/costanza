@@ -4,6 +4,7 @@
 //    Modified to work with jQuery
 
 ;(function($){
+  /*jshint boss:true, curly:false */
   function detect(ua){
     var os = this.os = {}, browser = this.browser = {},
       webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/),
@@ -16,7 +17,7 @@
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
       firefox = ua.match(/Firefox\/([\d.]+)/),
       opera = ua.match(/Opera/),
-      ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/);
+      ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/),
       safari = ua.match(/Version\/([\d.]+)([^S](Safari)|[^M]*(Mobile)[^S]*(Safari))/);
 
     if (browser.webkit = !!webkit) browser.version = webkit[1];
@@ -362,6 +363,7 @@ describe('costanza', function() {
     });
 
     it('should trigger strings successfully', function(done) {
+      /*jshint -W066:true */
       window._stringSet = function(callback) {
         expect(callback).to.equal('undefined');
         done();
@@ -433,6 +435,7 @@ describe('costanza', function() {
     });
 
     it('should trigger strings successfully', function(done) {
+      /*jshint -W066:true */
       window._stringSet = function() {
         clearInterval(interval);
         done();
@@ -682,6 +685,7 @@ describe('costanza', function() {
   });
 
   function click(el) {
+    /*jshint -W020:true */
     if (el.click) {
       el.click();
     } else {
