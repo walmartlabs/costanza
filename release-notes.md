@@ -2,7 +2,18 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v1.3.0...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v2.0.0...master)
+
+## v2.0.0 - December 8th, 2014
+- [#19](https://github.com/walmartlabs/costanza/pull/19) - Correct support for SVGAnimatedStrings ([@zachhale](https://api.github.com/users/zachhale))
+- [#18](https://github.com/walmartlabs/costanza/pull/18) - move project to gulp based build with karma and sauce ([@patrickkettner](https://api.github.com/users/patrickkettner))
+- Define main module entry point - 9f5952f
+- Move thorax plugin into root - 8a65ad7
+
+Compatibility notes:
+- CommonJS consumers of the constanza-thorax.js plugin now should use `require('costanza/thorax')`.
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v1.3.0...v2.0.0)
 
 ## v1.3.0 - August 18th, 2014
 - [#9](https://github.com/walmartlabs/costanza/issues/9) - Investigate global eval hacks ([@kpdecker](https://api.github.com/users/kpdecker))
