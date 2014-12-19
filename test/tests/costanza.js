@@ -679,7 +679,7 @@ describe('costanza', function() {
         if (document.removeEventListener) {
           document.removeEventListener('click', handler, true);
         } else {
-          document.detachEvent('click', handler);
+          document.detachEvent('onclick', handler);
         }
 
         click(el);
