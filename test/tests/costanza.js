@@ -690,6 +690,11 @@ describe('costanza', function() {
     });
 
     it('should handle adding a listener to a svg element with a css class', function(done) {
+      // No SVG support in old IE
+      if (!document.createElementNS) {
+        return done();
+      }
+
       var error = new Error('It failed'),
           handler = sinon.spy(function() { throw error; });
 
@@ -705,6 +710,11 @@ describe('costanza', function() {
     });
 
     it('should handle adding a listener to a svg element with no css class', function(done) {
+      // No SVG support in old IE
+      if (!document.createElementNS) {
+        return done();
+      }
+
       var error = new Error('It failed'),
           handler = sinon.spy(function() { throw error; });
 

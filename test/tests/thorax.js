@@ -1,9 +1,10 @@
 /*global Costanza */
 describe('costanza-thorax', function() {
-  var error = new Error('It failed!'),
+  var error,
       spy;
 
   beforeEach(function() {
+    error = new Error('It failed!');
     spy = sinon.spy();
     Costanza.init(spy);
   });
@@ -44,7 +45,7 @@ describe('costanza-thorax', function() {
     expect(spy.calledWith({
         type: 'javascript',
         section: 'here!',
-        msg: 'Costanza: It failed!',
+        msg: 'It failed!',
         stack: error.stack || error + ''
       },
       error)).to.be(true);
