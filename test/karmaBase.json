@@ -1,5 +1,6 @@
 {
   "frameworks": ["mocha"],
+  "logLevel": "ERROR",
   "singleRun": true,
   "colors": true,
   "reporters": ["dots"],

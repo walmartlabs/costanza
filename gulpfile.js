@@ -20,10 +20,23 @@ gulp.task('test-local', function(done) {
   }, done);
 });
 
-gulp.task('sauce', function(done) {
+gulp.task('sauce-ie', function(done) {
   karma.start({
-    configFile: __dirname + '/test/karma-sauce.js'
+    configFile: __dirname + '/test/karma-sauce-ie.js'
   }, done);
 });
+
+gulp.task('sauce-mobile', function(done) {
+  karma.start({
+    configFile: __dirname + '/test/karma-sauce-mobile.js'
+  }, done);
+});
+
+gulp.task('sauce-good', function(done) {
+  karma.start({
+    configFile: __dirname + '/test/karma-sauce-good.js'
+  }, done);
+});
+
 
 gulp.task('default', ['test']);

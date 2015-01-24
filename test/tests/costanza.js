@@ -4,6 +4,7 @@
 //    Modified to work with jQuery
 
 ;(function($){
+  /*jshint boss:true, curly:false */
   function detect(ua){
     var os = this.os = {}, browser = this.browser = {},
       webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/),
@@ -16,11 +17,12 @@
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
       firefox = ua.match(/Firefox\/([\d.]+)/),
       opera = ua.match(/Opera/),
-      ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/);
+      ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/),
       safari = ua.match(/Version\/([\d.]+)([^S](Safari)|[^M]*(Mobile)[^S]*(Safari))/);
 
     if (browser.webkit = !!webkit) browser.version = webkit[1];
     if (android) os.android = true, os.version = android[2];
+    if (browser.ie = !!ie) browser.version = parseInt(ie[1]);
     if (opera) browser.opera = true;
     if (ua.match(/PhantomJS/)) browser.phantom = true;
     if (safari) browser.safari = true;
@@ -80,6 +82,7 @@ describe('costanza', function() {
       expect(callback.callCount).to.equal(2);
       done();
     });
+
     it('report errors', function(done) {
       expect(function() {
         Costanza.run('fail!', function() {
@@ -91,11 +94,12 @@ describe('costanza', function() {
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
-          stack: error.stack
+          stack: error.stack || error + ''
         },
         error)).to.be(true);
       done();
     });
+
     it('report info', function(done) {
       expect(function() {
         Costanza.run({foo: true}, function() {
@@ -108,11 +112,12 @@ describe('costanza', function() {
           section: 'global',
           foo: true,
           msg: 'Failure is always an option',
-          stack: error.stack
+          stack: error.stack || error + ''
         },
         error)).to.be(true);
       done();
     });
+
     it('report errors and info', function(done) {
       expect(function() {
         Costanza.run('fail!', {foo: true}, function() {
@@ -125,11 +130,12 @@ describe('costanza', function() {
           section: 'fail!',
           foo: true,
           msg: 'Failure is always an option',
-          stack: error.stack
+          stack: error.stack || error + ''
         },
         error)).to.be(true);
       done();
     });
+
     it('should restore the site', function(done) {
       var section1 = Costanza.bind('success', function() {
         expect(Costanza.current()).to.equal('success');
@@ -150,7 +156,7 @@ describe('costanza', function() {
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
-          stack: error.stack
+          stack: error.stack || error + ''
         }, error)).to.be(true);
       done();
     });
@@ -168,7 +174,7 @@ describe('costanza', function() {
           type: 'javascript',
           section: 'fail!',
           msg: 'Failure is always an option',
-          stack: error.stack
+          stack: error.stack || error + ''
         },
         error)).to.be(true);
       done();
@@ -181,11 +187,13 @@ describe('costanza', function() {
       expect(spy.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined})).to.be(true);
       done();
     });
+
     it('should handle error objects', function(done) {
       Costanza.onError('foo', 'bar', 1, {foo: true});
       expect(spy.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined}, {foo: true})).to.be(true);
       done();
     });
+
     it('should handle ErrorEvents', function(done) {
       Costanza.onError({message: 'foo', lineno: 1, filename: 'bar'});
       expect(spy.calledWith({type: 'javascript', section: 'global', url: 'bar', line: 1, msg: 'foo', stack: undefined})).to.be(true);
@@ -194,7 +202,7 @@ describe('costanza', function() {
 
     describe('loading errors', function() {
       it('should handle image load errors', function(done) {
-        if ($.browser.firefox) {
+        if ($.browser.firefox || ($.browser.ie && $.browser.version < 9)) {
           return done();
         }
 
@@ -209,8 +217,9 @@ describe('costanza', function() {
         img.src = '/not-found.png';
         document.body.appendChild(img);
       });
+
       it('should handle script load errors', function(done) {
-        if ($.browser.firefox) {
+        if ($.browser.firefox || ($.browser.ie && $.browser.version < 9)) {
           return done();
         }
 
@@ -229,8 +238,10 @@ describe('costanza', function() {
         script.src = '/not-found.js';
         document.body.appendChild(script);
       });
+
       it('should handle script parse errors', function(done) {
         if (($.os.android && parseFloat($.os.version) < 3)
+            || ($.browser.ie && parseFloat($.browser.version) < 9)
             || $.browser.opera || $.browser.phantom) {
           // window.onerror is not supported by android 2.3
           // https://code.google.com/p/android/issues/detail?id=15680
@@ -274,10 +285,15 @@ describe('costanza', function() {
       });
 
       it('should handle video not found errors', function(done) {
-        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom || $.browser.safari) {
+        var video = document.createElement('video');
+
+        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom
+            || $.browser.safari || $.browser.ie
+            || !('src' in video)) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
           // Safari doesn't throws resource errors for missing video or audio srcs
+          // Skip all browsers that don't actually support video
           return done();
         }
 
@@ -288,15 +304,18 @@ describe('costanza', function() {
           done();
         });
 
-        var video = document.createElement('video');
         video.src = '/not-found.mpg';
         document.body.appendChild(video);
       });
 
       it('should handle video load errors', function(done) {
-        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom) {
+        var video = document.createElement('video');
+        if ($.os.phone || $.browser.firefox || $.os.android
+            || $.browser.safari || $.browser.ie
+            || !('src' in video)) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
+          // Skip browsers that don't actually support video
           return done();
         }
 
@@ -307,7 +326,6 @@ describe('costanza', function() {
           done();
         });
 
-        var video = document.createElement('video');
         video.src = '/invalid.js';
         document.body.appendChild(video);
       });
@@ -334,13 +352,21 @@ describe('costanza', function() {
   });
 
   describe('setTimeout', function() {
+    // setTimeout and setInterval doesn't work in old IE except under very
+    // specific circumstances so we skip all of the tests
+    // http://www.adequatelygood.com/Replacing-setTimeout-Globally.html
+    if ($.browser.ie && $.browser.version < 9) {
+      return;
+    }
+
     it('should trigger successfully', function(done) {
       var spy = sinon.spy(done);
-      setTimeout(spy, 10);
+      window.setTimeout(spy, 10);
       expect(spy.callCount).to.equal(0);
     });
 
     it('should trigger strings successfully', function(done) {
+      /*jshint -W066:true */
       window._stringSet = function(callback) {
         expect(callback).to.equal('undefined');
         done();
@@ -349,7 +375,7 @@ describe('costanza', function() {
     });
 
     it('should trigger with args successfully', function(done) {
-      if (/MSIE/i.test(navigator.userAgent)) {
+      if ($.browser.ie) {
         return done();
       }
 
@@ -361,6 +387,7 @@ describe('costanza', function() {
       setTimeout(spy, 10, 'foo', 2);
       expect(spy.callCount).to.equal(0);
     });
+
     it('should catch errors', function(done) {
       Costanza.init(function(info, err) {
         expect(info.section).to.equal('global');
@@ -372,6 +399,7 @@ describe('costanza', function() {
         throw new Error('It failed');
       }, 10);
     });
+
     it('should include current catch tag', function(done) {
       Costanza.init(function(info, err) {
         expect(info.section).to.equal('tracked!');
@@ -386,7 +414,15 @@ describe('costanza', function() {
       });
     });
   });
+
   describe('setInterval', function() {
+    // setTimeout and setInterval doesn't work in old IE except under very
+    // specific circumstances so we skip all of the tests
+    // http://www.adequatelygood.com/Replacing-setTimeout-Globally.html
+    if ($.browser.ie && $.browser.version < 9) {
+      return;
+    }
+
     var interval;
     afterEach(function() {
       clearInterval(interval);
@@ -400,7 +436,9 @@ describe('costanza', function() {
       interval = setInterval(spy, 10);
       expect(spy.callCount).to.equal(0);
     });
+
     it('should trigger strings successfully', function(done) {
+      /*jshint -W066:true */
       window._stringSet = function() {
         clearInterval(interval);
         done();
@@ -463,7 +501,13 @@ describe('costanza', function() {
       var spy = sinon.spy();
 
       el = document.createElement('div');
-      el.addEventListener('click', spy);
+
+      if (el.addEventListener) {
+        el.addEventListener('click', spy);
+      } else {
+        el.attachEvent('onclick', spy);
+      }
+
 
       document.body.appendChild(el);
       click(el);
@@ -473,6 +517,9 @@ describe('costanza', function() {
     });
 
     it('should execute handleEvent listeners', function(done) {
+      if (window.attachEvent) {
+        return done();
+      }
       var spy = sinon.spy();
       var handler = {
         handleEvent: spy
@@ -491,55 +538,90 @@ describe('costanza', function() {
       click(el);
 
       expect(spy.callCount).to.equal(1);
-
       done();
     });
+
     it('should catch errors', function(done) {
       var error = new Error('It failed');
 
       el = document.createElement('div');
-      el.addEventListener('click', function() { throw error; });
+
+      if (el.addEventListener) {
+        el.addEventListener('click', function() { throw error; });
+      } else {
+        el.attachEvent('onclick', function() { throw error; });
+      }
 
       document.body.appendChild(el);
       click(el);
 
+      var eventMatch = sinon.match({section: 'event-div:click'})
+            .or(sinon.match({section: 'event-div:onclick'}));
+
       expect(spy.callCount).to.equal(1);
-      expect(spy.calledWith(sinon.match({section: 'event-div:click'}), error)).to.be(true);
+      expect(spy.calledWith(eventMatch, error)).to.be(true);
       done();
     });
+
     it('should define section from id', function(done) {
       var error = new Error('It failed');
 
       el = document.createElement('div');
       el.id = 'id!';
       el.className = 'foo bar';
-      el.addEventListener('click', function() { throw error; });
+
+      if (el.addEventListener) {
+        el.addEventListener('click', function() { throw error; });
+      } else {
+        el.attachEvent('onclick', function() { throw error; });
+      }
 
       document.body.appendChild(el);
       click(el);
 
-      expect(spy.calledWith(sinon.match({section: 'event-div#id!:click'}), error)).to.be(true);
+      var eventMatch = sinon.match({section: 'event-div#id!:click'})
+            .or(sinon.match({section: 'event-div#id!:onclick'}));
+
+      expect(spy.callCount).to.equal(1);
+      expect(spy.calledWith(eventMatch, error)).to.be(true);
       done();
     });
+
     it('should define section from classname', function(done) {
       var error = new Error('It failed');
 
       el = document.createElement('div');
       el.className = 'foo bar';
-      el.addEventListener('click', function() { throw error; });
+
+      if (el.addEventListener) {
+        el.addEventListener('click', function() { throw error; });
+      } else {
+        el.attachEvent('onclick', function() { throw error; });
+      }
 
       document.body.appendChild(el);
       click(el);
 
-      expect(spy.calledWith(sinon.match({section: 'event-div.foo.bar:click'}), error)).to.be(true);
+      var eventMatch = sinon.match({section: 'event-div.foo.bar:click'})
+            .or(sinon.match({section: 'event-div.foo.bar:onclick'}));
+
+      expect(spy.callCount).to.equal(1);
+      expect(spy.calledWith(eventMatch, error)).to.be(true);
       done();
     });
+
     it('should remove event listeners', function(done) {
       var spy = sinon.spy();
 
       el = document.createElement('div');
-      el.addEventListener('click', spy);
-      el.removeEventListener('click', spy);
+
+      if (el.addEventListener) {
+        el.addEventListener('click', spy);
+        el.removeEventListener('click', spy);
+      } else {
+        el.attachEvent('click', spy);
+        el.detachEvent('click', spy);
+      }
 
       document.body.appendChild(el);
       click(el);
@@ -549,7 +631,8 @@ describe('costanza', function() {
     });
 
     it('should handle events on the window object', function(done) {
-      if (!window.Window) {
+     // We can't fire events on IE <= 8, so we can't catch them
+     if (!window.Window || window.attachEvent) {
         return done();
       }
 
@@ -573,22 +656,34 @@ describe('costanza', function() {
         done();
       });
     });
+
     it('should handle events on the document object', function(done) {
       var error = new Error('It failed: doc'),
           handler = sinon.spy(function() { throw error; });
 
       Costanza.run('caught!', function() {
-        document.addEventListener('click', handler, true);
+        if (document.addEventListener) {
+          document.addEventListener('click', handler, true);
+        } else {
+          document.attachEvent('onclick', handler);
+        }
 
-        el = document.createElement('div');
+        var el = document.createElement('div');
         document.body.appendChild(el);
         click(el);
 
+        var eventMatch = sinon.match({section: 'event-#document:click'})
+              .or(sinon.match({section: 'event-#document:onclick'}));
+
         expect(spy.callCount).to.equal(1);
-        expect(spy.calledWith(sinon.match({section: 'event-#document:click'}), error)).to.be(true);
+        expect(spy.calledWith(eventMatch, error)).to.be(true);
         expect(handler.callCount).to.equal(1);
 
-        document.removeEventListener('click', handler, true);
+        if (document.removeEventListener) {
+          document.removeEventListener('click', handler, true);
+        } else {
+          document.detachEvent('onclick', handler);
+        }
 
         click(el);
         expect(spy.callCount).to.equal(1);
@@ -598,6 +693,11 @@ describe('costanza', function() {
     });
 
     it('should handle adding a listener to a svg element with a css class', function(done) {
+      // No SVG support in old IE
+      if (!document.createElementNS) {
+        return done();
+      }
+
       var error = new Error('It failed'),
           handler = sinon.spy(function() { throw error; });
 
@@ -613,6 +713,11 @@ describe('costanza', function() {
     });
 
     it('should handle adding a listener to a svg element with no css class', function(done) {
+      // No SVG support in old IE
+      if (!document.createElementNS) {
+        return done();
+      }
+
       var error = new Error('It failed'),
           handler = sinon.spy(function() { throw error; });
 
@@ -628,14 +733,20 @@ describe('costanza', function() {
   });
 
   function click(el) {
+    /*jshint -W020:true */
     if (el.click) {
       el.click();
     } else {
       try {
         event = new Event('click');
       } catch (err) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
+        if (document.createEvent) {
+          var event = document.createEvent('MouseEvents');
+          event.initEvent('click', true, true);
+        } else {
+          var eventObj = document.createEventObject();
+          document.body.fireEvent('onclick', eventObj);
+        }
       }
       el.dispatchEvent(event);
     }
