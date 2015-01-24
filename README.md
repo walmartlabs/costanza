@@ -147,7 +147,7 @@ Desktop:
 - Chrome: Latest
 - Firefox: Latest
 - Safari: 7+
-- IE: 10+
+- IE: 8+
 - Opera: 12+
 
 Mobile:
