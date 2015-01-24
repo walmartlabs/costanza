@@ -10,7 +10,7 @@ before_script:
 - export PATH=./node_modules/.bin:$PATH
 
 script:
-  - "gulp test && gulp sauce-good && gulp sauce-ie && gulp sauce-mobile"
+  - "gulp test && gulp sauce-good && gulp sauce-ie"
 
 env:
   global:
