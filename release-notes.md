@@ -2,7 +2,17 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/costanza/compare/v2.0.0...master)
+[Commits](https://github.com/walmartlabs/costanza/compare/v2.1.0...master)
+
+## v2.1.0 - January 24th, 2015
+- [#21](https://github.com/walmartlabs/costanza/pull/21) - Test fix for IE8 fixes ([@zachhale](https://api.github.com/users/zachhale))
+- [#20](https://github.com/walmartlabs/costanza/pull/20) - updates for ie8 ([@patrickkettner](https://api.github.com/users/patrickkettner))
+- Update IE version support docs to 8 - 0fcd8da
+
+Compatibility notes:
+- IE8+ is now supported although some functionality such as catching setTimeout throws do not work in the older versions.
+
+[Commits](https://github.com/walmartlabs/costanza/compare/v2.0.0...v2.1.0)
 
 ## v2.0.0 - December 8th, 2014
 - [#19](https://github.com/walmartlabs/costanza/pull/19) - Correct support for SVGAnimatedStrings ([@zachhale](https://api.github.com/users/zachhale))
