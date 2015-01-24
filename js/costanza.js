@@ -22,8 +22,8 @@
   var reportCallback = defaultReporter,
       currentSection = 'global',
       _listeners = [],
-      _addEventStr = window.attachEvent ? 'attachEvent' : 'addEventListener',
-      _removeEventStr = window.detachEvent ? 'detachEvent' : 'removeEventListener',
+      _addEventStr = window.addEventListener ? 'addEventListener' : 'attachEvent',
+      _removeEventStr = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
       _onError,
       _setTimeout,
       _setInterval;
@@ -53,7 +53,7 @@
 
     // IE <=8 makes it nearly impossible to override setTimeout, so we don't
     // http://www.adequatelygood.com/Replacing-setTimeout-Globally.html
-    if (!window.attachEvent) {
+    if (window.addEventListener) {
       if (window.setTimeout && !setTimeout._costanza) {
         _setTimeout = setTimeout;
         window.setTimeout = wrapSet(_setTimeout);
