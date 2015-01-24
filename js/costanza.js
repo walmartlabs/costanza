@@ -331,7 +331,7 @@
 
       errorMsg._costanzaHandled = true;
       url = url || el.src || el.href;
-      type = el.nodeName.toLowerCase();
+      type = (el.nodeName || 'window').toLowerCase();
       errorMsg = 'load-failed';
     }
 
