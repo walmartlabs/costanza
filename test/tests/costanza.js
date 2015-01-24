@@ -287,7 +287,8 @@ describe('costanza', function() {
       it('should handle video not found errors', function(done) {
         var video = document.createElement('video');
 
-        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom || $.browser.safari
+        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.phantom
+            || $.browser.safari || $.browser.ie
             || !('src' in video)) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
@@ -309,7 +310,9 @@ describe('costanza', function() {
 
       it('should handle video load errors', function(done) {
         var video = document.createElement('video');
-        if ($.os.phone || $.browser.firefox || $.os.android || $.browser.safari || !('src' in video)) {
+        if ($.os.phone || $.browser.firefox || $.os.android
+            || $.browser.safari || $.browser.ie
+            || !('src' in video)) {
           // Most phones dump to an external app for video, so ignore for the sake of tests
           // Firefox generally doesn't support capturing error events
           // Skip browsers that don't actually support video
